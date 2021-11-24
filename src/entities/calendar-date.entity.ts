@@ -1,3 +1,4 @@
+import { Field, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   Entity,
@@ -6,31 +7,36 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ExceptionTypes } from './exception-types.entity';
-import { Calendar } from './calendar.entity';
+import { ExceptionType } from 'entities/exception-type.entity';
+import { Calendar } from 'entities/calendar.entity';
 
 @Index('calendar_dates_dateidx', ['date'], {})
 @Entity('calendar_dates', { schema: 'gtfs' })
-export class CalendarDates {
+@ObjectType()
+export class CalendarDate {
   @PrimaryGeneratedColumn('uuid')
+  @Field({ nullable: true })
   id: string;
 
   @Column('date', { name: 'date' })
+  @Field({ nullable: true })
   date: string;
 
   @ManyToOne(
-    () => ExceptionTypes,
-    (exceptionTypes) => exceptionTypes.calendarDates,
+    () => ExceptionType,
+    (exceptionType) => exceptionType.calendarDates,
   )
   @JoinColumn([
     { name: 'exception_type', referencedColumnName: 'exceptionType' },
   ])
-  exceptionType: ExceptionTypes;
+  @Field(() => ExceptionType)
+  exceptionType: ExceptionType;
 
   @ManyToOne(() => Calendar, (calendar) => calendar.calendarDates)
   @JoinColumn([
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'service_id', referencedColumnName: 'serviceId' },
   ])
+  @Field(() => Calendar)
   calendar: Calendar;
 }

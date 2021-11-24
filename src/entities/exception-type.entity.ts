@@ -1,18 +1,20 @@
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { CalendarDates } from './calendar-dates.entity';
+import { CalendarDate } from 'entities/calendar-date.entity';
 
 @Index('exception_types_pkey', ['exceptionType'], { unique: true })
 @Entity('exception_types', { schema: 'gtfs' })
-export class ExceptionTypes {
+@ObjectType()
+export class ExceptionType {
   @Column('integer', { primary: true, name: 'exception_type' })
+  @Field(() => Int)
   exceptionType: number;
 
   @Column('text', { name: 'description', nullable: true })
+  @Field({ nullable: true })
   description: string | null;
 
-  @OneToMany(
-    () => CalendarDates,
-    (calendarDates) => calendarDates.exceptionType,
-  )
-  calendarDates: CalendarDates[];
+  @OneToMany(() => CalendarDate, (calendarDate) => calendarDate.exceptionType)
+  @Field(() => [CalendarDate])
+  calendarDates: CalendarDate[];
 }

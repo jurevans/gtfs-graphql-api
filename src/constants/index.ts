@@ -12,6 +12,7 @@ export enum CacheKeyPrefix {
   TRANSFERS = 'transfers',
   ALERTS = 'alerts',
   STOPS = 'stops',
+  FEEDS = 'feeds',
 }
 
 export enum Intervals {

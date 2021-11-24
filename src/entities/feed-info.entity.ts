@@ -6,15 +6,15 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Agency } from './agency.entity';
-import { Calendar } from './calendar.entity';
-import { FareAttributes } from './fare-attributes.entity';
-import { FareRules } from './fare-rules.entity';
-import { Frequencies } from './frequencies.entity';
-import { Routes } from './routes.entity';
-import { StopTimes } from './stop-times.entity';
-import { Transfers } from './transfers.entity';
-import { Trips } from './trips.entity';
+import { Agency } from 'entities/agency.entity';
+import { Calendar } from 'entities/calendar.entity';
+import { FareAttributes } from 'entities/fare-attributes.entity';
+import { FareRule } from 'entities/fare-rule.entity';
+import { Frequency } from 'entities/frequency.entity';
+import { Route } from 'entities/route.entity';
+import { StopTime } from 'entities/stop-time.entity';
+import { Transfer } from 'entities/transfer.entity';
+import { Trip } from 'entities/trip.entity';
 
 @Index('feed_info_pkey', ['feedIndex'], { unique: true })
 @Entity('feed_info', { schema: 'gtfs' })
@@ -77,29 +77,34 @@ export class FeedInfo {
   agencies: Agency[];
 
   @OneToMany(() => Calendar, (calendar) => calendar.feedIndex)
+  @Field(() => [Calendar])
   calendars: Calendar[];
 
-  @OneToMany(
-    () => FareAttributes,
-    (fareAttributes) => fareAttributes.feedIndex2,
-  )
+  @OneToMany(() => FareAttributes, (fareAttributes) => fareAttributes.feed)
+  @Field(() => [FareAttributes])
   fareAttributes: FareAttributes[];
 
-  @OneToMany(() => FareRules, (fareRules) => fareRules.feedIndex)
-  fareRules: FareRules[];
+  @OneToMany(() => FareRule, (fareRule) => fareRule.feed)
+  @Field(() => [FareRule])
+  fareRules: FareRule[];
 
-  @OneToMany(() => Frequencies, (frequencies) => frequencies.feedIndex2)
-  frequencies: Frequencies[];
+  @OneToMany(() => Frequency, (frequency) => frequency.feed)
+  @Field(() => [Frequency])
+  frequencies: Frequency[];
 
-  @OneToMany(() => Routes, (routes) => routes.feedIndex2)
-  routes: Routes[];
+  @OneToMany(() => Route, (route) => route.feed)
+  @Field(() => [Route])
+  routes: Route[];
 
-  @OneToMany(() => StopTimes, (stopTimes) => stopTimes.feedIndex2)
-  stopTimes: StopTimes[];
+  @OneToMany(() => StopTime, (stopTime) => stopTime.feedIndex)
+  @Field(() => [StopTime])
+  stopTimes: StopTime[];
 
-  @OneToMany(() => Transfers, (transfers) => transfers.feedIndex)
-  transfers: Transfers[];
+  @OneToMany(() => Transfer, (transfer) => transfer.feedIndex)
+  @Field(() => [Transfer])
+  transfers: Transfer[];
 
-  @OneToMany(() => Trips, (trips) => trips.feedIndex2)
-  trips: Trips[];
+  @OneToMany(() => Trip, (trip) => trip.feedIndex)
+  @Field(() => [Trip])
+  trips: Trip[];
 }

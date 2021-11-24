@@ -1,18 +1,20 @@
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { Routes } from './routes.entity';
+import { Route } from 'entities/route.entity';
 
 @Index('route_types_pkey', ['routeType'], { unique: true })
 @Entity('route_types', { schema: 'gtfs' })
-export class RouteTypes {
+@ObjectType()
+export class RouteType {
   @Column('integer', { primary: true, name: 'route_type' })
+  @Field(() => Int)
   routeType: number;
 
   @Column('text', { name: 'description', nullable: true })
+  @Field({ nullable: true })
   description: string | null;
 
-  @OneToMany(() => Routes, (routes) => routes.routeType)
-  routes: Routes[];
-
-  @OneToMany(() => Routes, (routes) => routes.routeType2)
-  routes2: Routes[];
+  @OneToMany(() => Route, (route) => route.routeType)
+  @Field(() => [Route])
+  routes: Route[];
 }
