@@ -1,0 +1,7 @@
+{
+  "type": "postgres",
+  "schema": "gtfs",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "synchronize": false,
+  "logging": true
+}

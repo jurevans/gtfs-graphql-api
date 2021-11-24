@@ -1,0 +1,38 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Agency {
+  feedIndex: Int
+  agencyId: String!
+  agencyName: String
+  agencyUrl: String
+  agencyTimezone: String
+  agencyLang: String
+  agencyPhone: String
+  agencyFareUrl: String
+  agencyEmail: String
+  bikesPolicyUrl: String
+  feed: FeedInfo!
+}
+
+type FeedInfo {
+  feedIndex: Int!
+  feedPublisherName: String
+  feedPublisherUrl: String
+  feedTimezone: String
+  feedLang: String
+  feedVersion: String
+  feedStartDate: String
+  feedEndDate: String
+  feedId: String
+  feedContactUrl: String
+  feedContactEmail: String
+  feedDownloadDate: String
+  feedFile: String
+  agencies: [Agency!]
+}
+
+type Query {
+  feeds: [FeedInfo!]!
+}
