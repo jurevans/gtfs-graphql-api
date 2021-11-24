@@ -79,16 +79,13 @@ export class FeedInfo {
   @OneToMany(() => Calendar, (calendar) => calendar.feedIndex)
   calendars: Calendar[];
 
-  @OneToMany(
-    () => FareAttributes,
-    (fareAttributes) => fareAttributes.feedIndex2,
-  )
+  @OneToMany(() => FareAttributes, (fareAttributes) => fareAttributes.feed)
   fareAttributes: FareAttributes[];
 
-  @OneToMany(() => FareRules, (fareRules) => fareRules.feedIndex)
+  @OneToMany(() => FareRules, (fareRules) => fareRules.feed)
   fareRules: FareRules[];
 
-  @OneToMany(() => Frequencies, (frequencies) => frequencies.feedIndex2)
+  @OneToMany(() => Frequencies, (frequencies) => frequencies.feed)
   frequencies: Frequencies[];
 
   @OneToMany(() => Routes, (routes) => routes.feed)

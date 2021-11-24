@@ -63,6 +63,7 @@ export class Routes {
   routeSortOrder: number | null;
 
   @OneToMany(() => FareRules, (fareRules) => fareRules.routes)
+  @Field(() => [FareRules])
   fareRules: FareRules[];
 
   @ManyToOne(() => Agency, (agency) => agency.routes)
@@ -77,15 +78,19 @@ export class Routes {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'feed_index', referencedColumnName: 'feedIndex' }])
+  @Field(() => FeedInfo)
   feed: FeedInfo;
 
   @ManyToOne(() => RouteTypes, (routeTypes) => routeTypes.routes)
   @JoinColumn([{ name: 'route_type', referencedColumnName: 'routeType' }])
+  @Field(() => RouteTypes)
   routeType: RouteTypes;
 
   @OneToMany(() => Transfers, (transfers) => transfers.route)
+  @Field(() => [Transfers])
   transfers: Transfers[];
 
   @OneToMany(() => Trips, (trips) => trips.route)
+  @Field(() => [Trips])
   trips: Trips[];
 }

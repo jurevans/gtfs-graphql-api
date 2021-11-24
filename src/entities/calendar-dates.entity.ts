@@ -1,3 +1,4 @@
+import { Field, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   Entity,
@@ -11,11 +12,14 @@ import { Calendar } from 'entities/calendar.entity';
 
 @Index('calendar_dates_dateidx', ['date'], {})
 @Entity('calendar_dates', { schema: 'gtfs' })
+@ObjectType()
 export class CalendarDates {
   @PrimaryGeneratedColumn('uuid')
+  @Field({ nullable: true })
   id: string;
 
   @Column('date', { name: 'date' })
+  @Field({ nullable: true })
   date: string;
 
   @ManyToOne(
@@ -25,6 +29,7 @@ export class CalendarDates {
   @JoinColumn([
     { name: 'exception_type', referencedColumnName: 'exceptionType' },
   ])
+  @Field(() => ExceptionTypes)
   exceptionType: ExceptionTypes;
 
   @ManyToOne(() => Calendar, (calendar) => calendar.calendarDates)
@@ -32,5 +37,6 @@ export class CalendarDates {
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'service_id', referencedColumnName: 'serviceId' },
   ])
+  @Field(() => Calendar)
   calendar: Calendar;
 }

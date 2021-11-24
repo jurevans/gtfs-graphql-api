@@ -23,8 +23,8 @@ import { WheelchairAccessible } from 'entities/wheelchair-accessible.entity';
 @Entity('trips', { schema: 'gtfs' })
 @ObjectType()
 export class Trips {
-  @Field(() => Int)
   @Column('integer', { primary: true, name: 'feed_index' })
+  @Field(() => Int)
   feedIndex: number;
 
   @Column('text', { name: 'route_id' })
@@ -80,9 +80,11 @@ export class Trips {
   bikesAllowed: number | null;
 
   @OneToMany(() => Frequencies, (frequencies) => frequencies.trips)
+  @Field(() => [Frequencies])
   frequencies: Frequencies[];
 
   @OneToMany(() => StopTimes, (stopTimes) => stopTimes.trips)
+  @Field(() => [StopTimes])
   stopTimes: StopTimes[];
 
   @ManyToOne(() => Calendar, (calendar) => calendar.trips)
@@ -90,12 +92,14 @@ export class Trips {
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'service_id', referencedColumnName: 'serviceId' },
   ])
+  @Field(() => Calendar)
   calendar: Calendar;
 
   @ManyToOne(() => FeedInfo, (feedInfo) => feedInfo.trips, {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'feed_index', referencedColumnName: 'feedIndex' }])
+  @Field(() => FeedInfo)
   feed: FeedInfo;
 
   @ManyToOne(() => Routes, (routes) => routes.trips)
@@ -103,10 +107,12 @@ export class Trips {
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'route_id', referencedColumnName: 'routeId' },
   ])
+  @Field(() => Routes)
   route: Routes;
 
   @ManyToMany(() => Shapes)
   @JoinTable({ name: 'shapes', joinColumns: [{ name: 'shape_id' }] })
+  @Field(() => [Shapes])
   shapes: Shapes[];
 
   @ManyToOne(
@@ -119,5 +125,6 @@ export class Trips {
       referencedColumnName: 'wheelchairAccessible',
     },
   ])
+  @Field(() => WheelchairAccessible)
   wheelchairAccessible: WheelchairAccessible;
 }
