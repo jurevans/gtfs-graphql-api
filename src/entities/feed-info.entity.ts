@@ -11,10 +11,10 @@ import { Calendar } from 'entities/calendar.entity';
 import { FareAttributes } from 'entities/fare-attributes.entity';
 import { FareRules } from 'entities/fare-rules.entity';
 import { Frequencies } from 'entities/frequencies.entity';
-import { Routes } from 'entities/routes.entity';
+import { Route } from 'entities/route.entity';
 import { StopTimes } from 'entities/stop-times.entity';
 import { Transfers } from 'entities/transfers.entity';
-import { Trips } from 'entities/trips.entity';
+import { Trip } from 'entities/trip.entity';
 
 @Index('feed_info_pkey', ['feedIndex'], { unique: true })
 @Entity('feed_info', { schema: 'gtfs' })
@@ -88,9 +88,9 @@ export class FeedInfo {
   @OneToMany(() => Frequencies, (frequencies) => frequencies.feed)
   frequencies: Frequencies[];
 
-  @OneToMany(() => Routes, (routes) => routes.feed)
-  @Field(() => [Routes])
-  routes: Routes[];
+  @OneToMany(() => Route, (route) => route.feed)
+  @Field(() => [Route])
+  routes: Route[];
 
   @OneToMany(() => StopTimes, (stopTimes) => stopTimes.feedIndex)
   stopTimes: StopTimes[];
@@ -98,6 +98,6 @@ export class FeedInfo {
   @OneToMany(() => Transfers, (transfers) => transfers.feedIndex)
   transfers: Transfers[];
 
-  @OneToMany(() => Trips, (trips) => trips.feedIndex)
-  trips: Trips[];
+  @OneToMany(() => Trip, (trip) => trip.feedIndex)
+  trips: Trip[];
 }

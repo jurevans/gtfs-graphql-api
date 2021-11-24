@@ -13,7 +13,7 @@ import { Frequencies } from 'entities/frequencies.entity';
 import { StopTimes } from 'entities/stop-times.entity';
 import { Calendar } from 'entities/calendar.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
-import { Routes } from 'entities/routes.entity';
+import { Route } from 'entities/route.entity';
 import { Shapes } from 'entities/shapes.entity';
 import { WheelchairAccessible } from 'entities/wheelchair-accessible.entity';
 
@@ -22,7 +22,7 @@ import { WheelchairAccessible } from 'entities/wheelchair-accessible.entity';
 @Index('trips_trip_id', ['tripId'], {})
 @Entity('trips', { schema: 'gtfs' })
 @ObjectType()
-export class Trips {
+export class Trip {
   @Column('integer', { primary: true, name: 'feed_index' })
   @Field(() => Int)
   feedIndex: number;
@@ -102,13 +102,13 @@ export class Trips {
   @Field(() => FeedInfo)
   feed: FeedInfo;
 
-  @ManyToOne(() => Routes, (routes) => routes.trips)
+  @ManyToOne(() => Route, (route) => route.trips)
   @JoinColumn([
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'route_id', referencedColumnName: 'routeId' },
   ])
-  @Field(() => Routes)
-  route: Routes;
+  @Field(() => Route)
+  route: Route;
 
   @ManyToMany(() => Shapes)
   @JoinTable({ name: 'shapes', joinColumns: [{ name: 'shape_id' }] })

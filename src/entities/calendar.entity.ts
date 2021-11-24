@@ -11,7 +11,7 @@ import { FeedInfo } from 'entities/feed-info.entity';
 import { CalendarDates } from 'entities/calendar-dates.entity';
 import { FareRules } from 'entities/fare-rules.entity';
 import { Transfers } from 'entities/transfers.entity';
-import { Trips } from 'entities/trips.entity';
+import { Trip } from 'entities/trip.entity';
 
 @Index('calendar_pkey', ['feedIndex', 'serviceId'], { unique: true })
 @Index('calendar_service_id', ['serviceId'], {})
@@ -81,7 +81,7 @@ export class Calendar {
   @Field(() => [Transfers])
   transfers: Transfers[];
 
-  @OneToMany(() => Trips, (trips) => trips.calendar)
-  @Field(() => [Trips])
-  trips: Trips[];
+  @OneToMany(() => Trip, (trip) => trip.calendar)
+  @Field(() => [Trip])
+  trips: Trip[];
 }

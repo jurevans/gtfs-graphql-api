@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Calendar } from 'entities/calendar.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
-import { Routes } from 'entities/routes.entity';
+import { Route } from 'entities/route.entity';
 import { TransferTypes } from 'entities/transfer-types.entity';
 
 @Index('transfers_pkey', ['feedIndex', 'fromStopId', 'toStopId'], {
@@ -49,13 +49,13 @@ export class Transfers {
   @Field(() => FeedInfo)
   feed: FeedInfo;
 
-  @ManyToOne(() => Routes, (routes) => routes.transfers)
+  @ManyToOne(() => Route, (route) => route.transfers)
   @JoinColumn([
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'from_route_id', referencedColumnName: 'routeId' },
   ])
-  @Field(() => Routes)
-  route: Routes;
+  @Field(() => Route)
+  route: Route;
 
   @ManyToOne(() => TransferTypes, (transferTypes) => transferTypes.transfers)
   @JoinColumn([{ name: 'transfer_type', referencedColumnName: 'transferType' }])

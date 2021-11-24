@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { FeedInfo } from 'entities/feed-info.entity';
 import { FareAttributes } from 'entities/fare-attributes.entity';
-import { Routes } from 'entities/routes.entity';
+import { Route } from 'entities/route.entity';
 
 @Index('agency_pkey', ['agencyId', 'feedIndex'], { unique: true })
 @Entity('agency', { schema: 'gtfs' })
@@ -63,6 +63,6 @@ export class Agency {
   @OneToMany(() => FareAttributes, (fareAttributes) => fareAttributes.agency)
   fareAttributes: FareAttributes[];
 
-  @OneToMany(() => Routes, (routes) => routes.agency)
-  routes: Routes[];
+  @OneToMany(() => Route, (route) => route.agency)
+  routes: Route[];
 }

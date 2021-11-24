@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { Stops } from 'entities/stops.entity';
-import { Trips } from 'entities/trips.entity';
+import { Stop } from 'entities/stop.entity';
+import { Trip } from 'entities/trip.entity';
 
 @Index('wheelchair_accessible_pkey', ['wheelchairAccessible'], { unique: true })
 @Entity('wheelchair_accessible', { schema: 'gtfs' })
@@ -15,11 +15,11 @@ export class WheelchairAccessible {
   @Field({ nullable: true })
   description: string | null;
 
-  @OneToMany(() => Stops, (stops) => stops.wheelchairAccessible)
-  @Field(() => [Stops])
-  stops: Stops[];
+  @OneToMany(() => Stop, (stop) => stop.wheelchairAccessible)
+  @Field(() => [Stop])
+  stops: Stop[];
 
-  @OneToMany(() => Trips, (trips) => trips.wheelchairAccessible)
-  @Field(() => [Trips])
-  trips: Trips[];
+  @OneToMany(() => Trip, (trip) => trip.wheelchairAccessible)
+  @Field(() => [Trip])
+  trips: Trip[];
 }

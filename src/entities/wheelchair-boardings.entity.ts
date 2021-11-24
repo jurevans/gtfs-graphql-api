@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { Stops } from 'entities/stops.entity';
+import { Stop } from 'entities/stop.entity';
 
 @Index('wheelchair_boardings_pkey', ['wheelchairBoarding'], { unique: true })
 @Entity('wheelchair_boardings', { schema: 'gtfs' })
@@ -14,7 +14,7 @@ export class WheelchairBoardings {
   @Field({ nullable: true })
   description: string | null;
 
-  @OneToMany(() => Stops, (stops) => stops.wheelchairBoarding)
-  @Field(() => [Stops])
-  stops: Stops[];
+  @OneToMany(() => Stop, (stop) => stop.wheelchairBoarding)
+  @Field(() => [Stop])
+  stops: Stop[];
 }

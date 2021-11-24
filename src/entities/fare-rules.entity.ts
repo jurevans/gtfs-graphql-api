@@ -9,7 +9,7 @@ import {
 import { Calendar } from 'entities/calendar.entity';
 import { FareAttributes } from 'entities/fare-attributes.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
-import { Routes } from 'entities/routes.entity';
+import { Route } from 'entities/route.entity';
 
 @Entity('fare_rules', { schema: 'gtfs' })
 @ObjectType()
@@ -53,11 +53,11 @@ export class FareRules {
   @Field(() => FeedInfo)
   feed: FeedInfo;
 
-  @ManyToOne(() => Routes, (routes) => routes.fareRules)
+  @ManyToOne(() => Route, (route) => route.fareRules)
   @JoinColumn([
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'route_id', referencedColumnName: 'routeId' },
   ])
-  @Field(() => Routes)
-  routes: Routes;
+  @Field(() => Route)
+  routes: Route;
 }

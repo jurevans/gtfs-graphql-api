@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { FeedInfo } from 'entities/feed-info.entity';
-import { Trips } from 'entities/trips.entity';
+import { Trip } from 'entities/trip.entity';
 
 @Index('frequencies_pkey', ['feedIndex', 'startTime', 'tripId'], {
   unique: true,
@@ -48,11 +48,11 @@ export class Frequencies {
   @Field(() => FeedInfo)
   feed: FeedInfo;
 
-  @ManyToOne(() => Trips, (trips) => trips.frequencies)
+  @ManyToOne(() => Trip, (trip) => trip.frequencies)
   @JoinColumn([
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'trip_id', referencedColumnName: 'tripId' },
   ])
-  @Field(() => Trips)
-  trips: Trips;
+  @Field(() => Trip)
+  trips: Trip;
 }

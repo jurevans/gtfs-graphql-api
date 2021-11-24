@@ -3,8 +3,8 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { ContinuousPickup } from 'entities/continuous-pickup.entity';
 import { PickupDropoffTypes } from 'entities/pickup-dropoff-types.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
-import { Stops } from 'entities/stops.entity';
-import { Trips } from 'entities/trips.entity';
+import { Stop } from 'entities/stop.entity';
+import { Trip } from 'entities/trip.entity';
 import { Timepoints } from 'entities/timepoints.entity';
 
 @Index('arr_time_index', ['arrivalTimeSeconds'], {})
@@ -82,21 +82,21 @@ export class StopTimes {
   @Field(() => FeedInfo)
   feed: FeedInfo;
 
-  @ManyToOne(() => Stops, (stops) => stops.stopTimes)
+  @ManyToOne(() => Stop, (stop) => stop.stopTimes)
   @JoinColumn([
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'stop_id', referencedColumnName: 'stopId' },
   ])
-  @Field(() => Stops)
-  stops: Stops;
+  @Field(() => Stop)
+  stops: Stop;
 
-  @ManyToOne(() => Trips, (trips) => trips.stopTimes)
+  @ManyToOne(() => Trip, (trip) => trip.stopTimes)
   @JoinColumn([
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'trip_id', referencedColumnName: 'tripId' },
   ])
-  @Field(() => Trips)
-  trips: Trips;
+  @Field(() => Trip)
+  trips: Trip;
 
   @ManyToOne(
     () => PickupDropoffTypes,

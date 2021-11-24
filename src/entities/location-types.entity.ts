@@ -1,6 +1,6 @@
-import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { Stops } from 'entities/stops.entity';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Column, Entity, Index, OneToMany } from 'typeorm';
+import { Stop } from 'entities/stop.entity';
 
 @Index('location_types_pkey', ['locationType'], { unique: true })
 @Entity('location_types', { schema: 'gtfs' })
@@ -14,7 +14,7 @@ export class LocationTypes {
   @Field({ nullable: true })
   description: string | null;
 
-  @OneToMany(() => Stops, (stops) => stops.locationType)
-  @Field(() => [Stops])
-  stops: Stops[];
+  @OneToMany(() => Stop, (stop) => stop.locationType)
+  @Field(() => [Stop])
+  stops: Stop[];
 }

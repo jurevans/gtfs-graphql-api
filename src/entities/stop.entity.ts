@@ -16,7 +16,7 @@ import { Transfers } from 'entities/transfers.entity';
 @Index('stops_pkey', ['feedIndex', 'stopId'], { unique: true })
 @Entity('stops', { schema: 'gtfs' })
 @ObjectType()
-export class Stops {
+export class Stop {
   @Column('integer', { primary: true, name: 'feed_index' })
   @Field(() => Int)
   feedIndex: number;

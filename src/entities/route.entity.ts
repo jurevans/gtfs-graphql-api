@@ -12,12 +12,12 @@ import { Agency } from 'entities/agency.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
 import { RouteTypes } from 'entities/routeTypes.entity';
 import { Transfers } from 'entities/transfers.entity';
-import { Trips } from 'entities/trips.entity';
+import { Trip } from 'entities/trip.entity';
 
 @Index('routes_pkey', ['feedIndex', 'routeId'], { unique: true })
 @Entity('routes', { schema: 'gtfs' })
 @ObjectType()
-export class Routes {
+export class Route {
   @Column('integer', { primary: true, name: 'feed_index' })
   @Field(() => Int)
   feedIndex: number;
@@ -90,7 +90,7 @@ export class Routes {
   @Field(() => [Transfers])
   transfers: Transfers[];
 
-  @OneToMany(() => Trips, (trips) => trips.route)
-  @Field(() => [Trips])
-  trips: Trips[];
+  @OneToMany(() => Trip, (trips) => trips.route)
+  @Field(() => [Trip])
+  trips: Trip[];
 }

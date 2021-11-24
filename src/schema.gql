@@ -24,7 +24,7 @@ type CalendarDates {
 type RouteTypes {
   routeType: Int!
   description: String
-  routes: [Routes!]!
+  routes: [Route!]!
 }
 
 type Frequencies {
@@ -37,7 +37,7 @@ type Frequencies {
   startTimeSeconds: Int
   endTimeSeconds: Int
   feed: FeedInfo!
-  trips: Trips!
+  trips: Trip!
 }
 
 type ContinuousPickup {
@@ -56,23 +56,23 @@ type PickupDropoffTypes {
 type LocationTypes {
   locationType: Int!
   description: String
-  stops: [Stops!]!
+  stops: [Stop!]!
 }
 
 type WheelchairAccessible {
   wheelchairAccessible: Int!
   description: String
-  stops: [Stops!]!
-  trips: [Trips!]!
+  stops: [Stop!]!
+  trips: [Trip!]!
 }
 
 type WheelchairBoardings {
   wheelchairBoarding: Int!
   description: String
-  stops: [Stops!]!
+  stops: [Stop!]!
 }
 
-type Stops {
+type Stop {
   feedIndex: Int!
   stopId: String!
   stopName: String
@@ -121,8 +121,8 @@ type StopTimes {
   departureTimeSeconds: Int
   continuousPickup: ContinuousPickup!
   feed: FeedInfo!
-  stops: Stops!
-  trips: Trips!
+  stops: Stop!
+  trips: Trip!
   dropOffType: PickupDropoffTypes!
   pickupType: PickupDropoffTypes!
   timepoint: Timepoints!
@@ -137,7 +137,7 @@ type Shapes {
   shapeDistTraveled: Int
 }
 
-type Trips {
+type Trip {
   feedIndex: Int!
   routeId: String
   serviceId: String
@@ -156,12 +156,12 @@ type Trips {
   stopTimes: [StopTimes!]!
   calendar: Calendar!
   feed: FeedInfo!
-  route: Routes!
+  route: Route!
   shapes: [Shapes!]!
   wheelchairAccessible: WheelchairAccessible!
 }
 
-type Routes {
+type Route {
   feedIndex: Int!
   routeId: String!
   routeShortName: String
@@ -176,7 +176,7 @@ type Routes {
   feed: FeedInfo!
   routeType: RouteTypes!
   transfers: [Transfers!]!
-  trips: [Trips!]!
+  trips: [Trip!]!
 }
 
 type TransferTypes {
@@ -192,7 +192,7 @@ type Transfers {
   minTransferTime: Int
   calendar: Calendar!
   feed: FeedInfo!
-  route: Routes!
+  route: Route!
   transferType: TransferTypes!
 }
 
@@ -212,7 +212,7 @@ type Calendar {
   calendarDates: [CalendarDates!]!
   fareRules: [FareRules!]!
   transfers: [Transfers!]!
-  trips: [Trips!]!
+  trips: [Trip!]!
 }
 
 type FareRules {
@@ -223,7 +223,7 @@ type FareRules {
   calendar: Calendar!
   fareAttributes: FareAttributes!
   feed: FeedInfo!
-  routes: Routes!
+  routes: Route!
 }
 
 type FareAttributes {
@@ -268,7 +268,25 @@ type FeedInfo {
   feedDownloadDate: String
   feedFile: String
   agencies: [Agency!]
-  routes: [Routes!]!
+  routes: [Route!]!
+}
+
+type Routes {
+  feedIndex: Int!
+  routeId: String!
+  routeShortName: String
+  routeLongName: String
+  routeDesc: String
+  routeUrl: String
+  routeColor: String
+  routeTextColor: String
+  routeSortOrder: Float
+  fareRules: [FareRules!]!
+  agency: Agency!
+  feed: FeedInfo!
+  routeType: RouteTypes!
+  transfers: [Transfers!]!
+  trips: [Trip!]!
 }
 
 type Query {
