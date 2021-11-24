@@ -6,15 +6,15 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Agency } from './agency.entity';
-import { Calendar } from './calendar.entity';
-import { FareAttributes } from './fare-attributes.entity';
-import { FareRules } from './fare-rules.entity';
-import { Frequencies } from './frequencies.entity';
-import { Routes } from './routes.entity';
-import { StopTimes } from './stop-times.entity';
-import { Transfers } from './transfers.entity';
-import { Trips } from './trips.entity';
+import { Agency } from 'entities/agency.entity';
+import { Calendar } from 'entities/calendar.entity';
+import { FareAttributes } from 'entities/fare-attributes.entity';
+import { FareRules } from 'entities/fare-rules.entity';
+import { Frequencies } from 'entities/frequencies.entity';
+import { Routes } from 'entities/routes.entity';
+import { StopTimes } from 'entities/stop-times.entity';
+import { Transfers } from 'entities/transfers.entity';
+import { Trips } from 'entities/trips.entity';
 
 @Index('feed_info_pkey', ['feedIndex'], { unique: true })
 @Entity('feed_info', { schema: 'gtfs' })
@@ -95,12 +95,12 @@ export class FeedInfo {
   @Field(() => [Routes])
   routes: Routes[];
 
-  @OneToMany(() => StopTimes, (stopTimes) => stopTimes.feedIndex2)
+  @OneToMany(() => StopTimes, (stopTimes) => stopTimes.feedIndex)
   stopTimes: StopTimes[];
 
   @OneToMany(() => Transfers, (transfers) => transfers.feedIndex)
   transfers: Transfers[];
 
-  @OneToMany(() => Trips, (trips) => trips.feedIndex2)
+  @OneToMany(() => Trips, (trips) => trips.feedIndex)
   trips: Trips[];
 }

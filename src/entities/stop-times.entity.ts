@@ -1,10 +1,10 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
-import { ContinuousPickup } from './continuous-pickup.entity';
-import { PickupDropoffTypes } from './pickup-dropoff-types.entity';
-import { FeedInfo } from './feed-info.entity';
-import { Stops } from './stops.entity';
-import { Trips } from './trips.entity';
-import { Timepoints } from './timepoints.entity';
+import { ContinuousPickup } from 'entities/continuous-pickup.entity';
+import { PickupDropoffTypes } from 'entities/pickup-dropoff-types.entity';
+import { FeedInfo } from 'entities/feed-info.entity';
+import { Stops } from 'entities/stops.entity';
+import { Trips } from 'entities/trips.entity';
+import { Timepoints } from 'entities/timepoints.entity';
 
 @Index('arr_time_index', ['arrivalTimeSeconds'], {})
 @Index('dep_time_index', ['departureTimeSeconds'], {})
@@ -72,7 +72,7 @@ export class StopTimes {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'feed_index', referencedColumnName: 'feedIndex' }])
-  feedIndex2: FeedInfo;
+  feed: FeedInfo;
 
   @ManyToOne(() => Stops, (stops) => stops.stopTimes)
   @JoinColumn([

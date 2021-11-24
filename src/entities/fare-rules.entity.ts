@@ -5,10 +5,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Calendar } from './calendar.entity';
-import { FareAttributes } from './fare-attributes.entity';
-import { FeedInfo } from './feed-info.entity';
-import { Routes } from './routes.entity';
+import { Calendar } from 'entities/calendar.entity';
+import { FareAttributes } from 'entities/fare-attributes.entity';
+import { FeedInfo } from 'entities/feed-info.entity';
+import { Routes } from 'entities/routes.entity';
 
 @Entity('fare_rules', { schema: 'gtfs' })
 export class FareRules {

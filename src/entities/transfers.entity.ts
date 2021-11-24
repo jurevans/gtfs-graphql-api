@@ -6,10 +6,10 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { Calendar } from './calendar.entity';
-import { FeedInfo } from './feed-info.entity';
-import { Routes } from './routes.entity';
-import { TransferTypes } from './transfer-types.entity';
+import { Calendar } from 'entities/calendar.entity';
+import { FeedInfo } from 'entities/feed-info.entity';
+import { Routes } from 'entities/routes.entity';
+import { TransferTypes } from 'entities/transfer-types.entity';
 
 @Index('transfers_pkey', ['feedIndex', 'fromStopId', 'toStopId'], {
   unique: true,
@@ -35,27 +35,18 @@ export class Transfers {
   ])
   calendar: Calendar;
 
-  /*
   @ManyToOne(() => FeedInfo, (feedInfo) => feedInfo.transfers, {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'feed_index', referencedColumnName: 'feedIndex' }])
-  feedIndex: FeedInfo;
-  */
+  feed: FeedInfo;
 
   @ManyToOne(() => Routes, (routes) => routes.transfers)
   @JoinColumn([
     { name: 'feed_index', referencedColumnName: 'feedIndex' },
     { name: 'from_route_id', referencedColumnName: 'routeId' },
   ])
-  routes: Routes;
-
-  @ManyToOne(() => Routes, (routes) => routes.transfers2)
-  @JoinColumn([
-    { name: 'feed_index', referencedColumnName: 'feedIndex' },
-    { name: 'to_route_id', referencedColumnName: 'routeId' },
-  ])
-  routes2: Routes;
+  route: Routes;
 
   @ManyToOne(() => TransferTypes, (transferTypes) => transferTypes.transfers)
   @JoinColumn([{ name: 'transfer_type', referencedColumnName: 'transferType' }])

@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { StopTimes } from './stop-times.entity';
+import { StopTimes } from 'entities/stop-times.entity';
 
 @Index('timepoints_pkey', ['timepoint'], { unique: true })
 @Entity('timepoints', { schema: 'gtfs' })

@@ -7,12 +7,12 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { FareRules } from './fare-rules.entity';
-import { Agency } from './agency.entity';
-import { FeedInfo } from './feed-info.entity';
-import { RouteTypes } from './routeTypes.entity';
-import { Transfers } from './transfers.entity';
-import { Trips } from './trips.entity';
+import { FareRules } from 'entities/fare-rules.entity';
+import { Agency } from 'entities/agency.entity';
+import { FeedInfo } from 'entities/feed-info.entity';
+import { RouteTypes } from 'entities/routeTypes.entity';
+import { Transfers } from 'entities/transfers.entity';
+import { Trips } from 'entities/trips.entity';
 
 @Index('routes_pkey', ['feedIndex', 'routeId'], { unique: true })
 @Entity('routes', { schema: 'gtfs' })
@@ -83,16 +83,9 @@ export class Routes {
   @JoinColumn([{ name: 'route_type', referencedColumnName: 'routeType' }])
   routeType: RouteTypes;
 
-  @ManyToOne(() => RouteTypes, (routeTypes) => routeTypes.routes2)
-  @JoinColumn([{ name: 'route_type', referencedColumnName: 'routeType' }])
-  routeType2: RouteTypes;
-
-  @OneToMany(() => Transfers, (transfers) => transfers.routes)
+  @OneToMany(() => Transfers, (transfers) => transfers.route)
   transfers: Transfers[];
 
-  @OneToMany(() => Transfers, (transfers) => transfers.routes2)
-  transfers2: Transfers[];
-
-  @OneToMany(() => Trips, (trips) => trips.routes)
+  @OneToMany(() => Trips, (trips) => trips.route)
   trips: Trips[];
 }

@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { FareAttributes } from './fare-attributes.entity';
+import { FareAttributes } from 'entities/fare-attributes.entity';
 
 @Index('payment_methods_pkey', ['paymentMethod'], { unique: true })
 @Entity('payment_methods', { schema: 'gtfs' })

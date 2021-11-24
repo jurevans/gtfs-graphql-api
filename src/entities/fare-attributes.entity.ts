@@ -6,10 +6,10 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Agency } from './agency.entity';
-import { FeedInfo } from './feed-info.entity';
-import { PaymentMethods } from './payment-methods.entity';
-import { FareRules } from './fare-rules.entity';
+import { Agency } from 'entities/agency.entity';
+import { FeedInfo } from 'entities/feed-info.entity';
+import { PaymentMethods } from 'entities/payment-methods.entity';
+import { FareRules } from 'entities/fare-rules.entity';
 
 @Index('fare_attributes_pkey', ['fareId', 'feedIndex'], { unique: true })
 @Entity('fare_attributes', { schema: 'gtfs' })

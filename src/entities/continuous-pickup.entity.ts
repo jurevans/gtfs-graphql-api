@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { StopTimes } from './stop-times.entity';
+import { StopTimes } from 'entities/stop-times.entity';
 
 @Index('continuous_pickup_pkey', ['continuousPickup'], { unique: true })
 @Entity('continuous_pickup', { schema: 'gtfs' })

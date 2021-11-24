@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ExceptionTypes } from './exception-types.entity';
-import { Calendar } from './calendar.entity';
+import { ExceptionTypes } from 'entities/exception-types.entity';
+import { Calendar } from 'entities/calendar.entity';
 
 @Index('calendar_dates_dateidx', ['date'], {})
 @Entity('calendar_dates', { schema: 'gtfs' })

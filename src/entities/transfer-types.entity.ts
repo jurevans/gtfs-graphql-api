@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { Transfers } from './transfers.entity';
+import { Transfers } from 'entities/transfers.entity';
 
 @Index('transfer_types_pkey', ['transferType'], { unique: true })
 @Entity('transfer_types', { schema: 'gtfs' })

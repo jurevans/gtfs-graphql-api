@@ -6,11 +6,11 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { StopTimes } from './stop-times.entity';
-import { LocationTypes } from './location-types.entity';
-import { WheelchairAccessible } from './wheelchair-accessible.entity';
-import { WheelchairBoardings } from './wheelchair-boardings.entity';
-import { Transfers } from './transfers.entity';
+import { StopTimes } from 'entities/stop-times.entity';
+import { LocationTypes } from 'entities/location-types.entity';
+import { WheelchairAccessible } from 'entities/wheelchair-accessible.entity';
+import { WheelchairBoardings } from 'entities/wheelchair-boardings.entity';
+import { Transfers } from 'entities/transfers.entity';
 
 @Index('stops_pkey', ['feedIndex', 'stopId'], { unique: true })
 @Entity('stops', { schema: 'gtfs' })

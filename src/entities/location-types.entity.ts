@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { Stops } from './stops.entity';
+import { Stops } from 'entities/stops.entity';
 
 @Index('location_types_pkey', ['locationType'], { unique: true })
 @Entity('location_types', { schema: 'gtfs' })

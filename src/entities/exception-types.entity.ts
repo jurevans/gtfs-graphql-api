@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { CalendarDates } from './calendar-dates.entity';
+import { CalendarDates } from 'entities/calendar-dates.entity';
 
 @Index('exception_types_pkey', ['exceptionType'], { unique: true })
 @Entity('exception_types', { schema: 'gtfs' })

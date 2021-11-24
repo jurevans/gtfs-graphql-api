@@ -6,11 +6,11 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { FeedInfo } from './feed-info.entity';
-import { CalendarDates } from './calendar-dates.entity';
-import { FareRules } from './fare-rules.entity';
-import { Transfers } from './transfers.entity';
-import { Trips } from './trips.entity';
+import { FeedInfo } from 'entities/feed-info.entity';
+import { CalendarDates } from 'entities/calendar-dates.entity';
+import { FareRules } from 'entities/fare-rules.entity';
+import { Transfers } from 'entities/transfers.entity';
+import { Trips } from 'entities/trips.entity';
 
 @Index('calendar_pkey', ['feedIndex', 'serviceId'], { unique: true })
 @Index('calendar_service_id', ['serviceId'], {})

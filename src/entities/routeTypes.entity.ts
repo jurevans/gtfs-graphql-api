@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { Routes } from './routes.entity';
+import { Routes } from 'entities/routes.entity';
 
 @Index('route_types_pkey', ['routeType'], { unique: true })
 @Entity('route_types', { schema: 'gtfs' })
@@ -12,7 +12,4 @@ export class RouteTypes {
 
   @OneToMany(() => Routes, (routes) => routes.routeType)
   routes: Routes[];
-
-  @OneToMany(() => Routes, (routes) => routes.routeType2)
-  routes2: Routes[];
 }

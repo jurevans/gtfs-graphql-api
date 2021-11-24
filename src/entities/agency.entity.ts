@@ -7,9 +7,9 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { FeedInfo } from './feed-info.entity';
-import { FareAttributes } from './fare-attributes.entity';
-import { Routes } from './routes.entity';
+import { FeedInfo } from 'entities/feed-info.entity';
+import { FareAttributes } from 'entities/fare-attributes.entity';
+import { Routes } from 'entities/routes.entity';
 
 @Index('agency_pkey', ['agencyId', 'feedIndex'], { unique: true })
 @Entity('agency', { schema: 'gtfs' })

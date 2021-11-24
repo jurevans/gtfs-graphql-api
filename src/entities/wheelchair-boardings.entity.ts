@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { Stops } from './stops.entity';
+import { Stops } from 'entities/stops.entity';
 
 @Index('wheelchair_boardings_pkey', ['wheelchairBoarding'], { unique: true })
 @Entity('wheelchair_boardings', { schema: 'gtfs' })
