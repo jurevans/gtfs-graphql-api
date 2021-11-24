@@ -13,7 +13,7 @@ import { Route } from 'entities/route.entity';
 
 @Entity('fare_rules', { schema: 'gtfs' })
 @ObjectType()
-export class FareRules {
+export class FareRule {
   @PrimaryGeneratedColumn('uuid')
   @Field({ nullable: true })
   id: string;

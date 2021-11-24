@@ -10,14 +10,14 @@ import {
 import { Calendar } from 'entities/calendar.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
 import { Route } from 'entities/route.entity';
-import { TransferTypes } from 'entities/transfer-types.entity';
+import { TransferType } from 'entities/transfer-type.entity';
 
 @Index('transfers_pkey', ['feedIndex', 'fromStopId', 'toStopId'], {
   unique: true,
 })
 @Entity('transfers', { schema: 'gtfs' })
 @ObjectType()
-export class Transfers {
+export class Transfer {
   @PrimaryColumn('number', { name: 'feed_index' })
   @Field(() => Int)
   feedIndex: FeedInfo;
@@ -57,8 +57,8 @@ export class Transfers {
   @Field(() => Route)
   route: Route;
 
-  @ManyToOne(() => TransferTypes, (transferTypes) => transferTypes.transfers)
+  @ManyToOne(() => TransferType, (transferType) => transferType.transfers)
   @JoinColumn([{ name: 'transfer_type', referencedColumnName: 'transferType' }])
-  @Field(() => TransferTypes)
-  transferType: TransferTypes;
+  @Field(() => TransferType)
+  transferType: TransferType;
 }

@@ -8,7 +8,7 @@ import { Trip } from 'entities/trip.entity';
 })
 @Entity('frequencies', { schema: 'gtfs' })
 @ObjectType()
-export class Frequencies {
+export class Frequency {
   @Column('integer', { primary: true, name: 'feed_index' })
   @Field(() => Int)
   feedIndex: number;

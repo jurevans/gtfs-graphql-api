@@ -8,9 +8,9 @@ import {
   OneToMany,
 } from 'typeorm';
 import { FeedInfo } from 'entities/feed-info.entity';
-import { CalendarDates } from 'entities/calendar-dates.entity';
-import { FareRules } from 'entities/fare-rules.entity';
-import { Transfers } from 'entities/transfers.entity';
+import { CalendarDate } from 'entities/calendar-date.entity';
+import { FareRule } from 'entities/fare-rule.entity';
+import { Transfer } from 'entities/transfer.entity';
 import { Trip } from 'entities/trip.entity';
 
 @Index('calendar_pkey', ['feedIndex', 'serviceId'], { unique: true })
@@ -69,17 +69,17 @@ export class Calendar {
   @Field(() => FeedInfo)
   feed: FeedInfo;
 
-  @OneToMany(() => CalendarDates, (calendarDates) => calendarDates.calendar)
-  @Field(() => [CalendarDates])
-  calendarDates: CalendarDates[];
+  @OneToMany(() => CalendarDate, (calendarDate) => calendarDate.calendar)
+  @Field(() => [CalendarDate])
+  calendarDates: CalendarDate[];
 
-  @OneToMany(() => FareRules, (fareRules) => fareRules.calendar)
-  @Field(() => [FareRules])
-  fareRules: FareRules[];
+  @OneToMany(() => FareRule, (fareRule) => fareRule.calendar)
+  @Field(() => [FareRule])
+  fareRules: FareRule[];
 
-  @OneToMany(() => Transfers, (transfers) => transfers.calendar)
-  @Field(() => [Transfers])
-  transfers: Transfers[];
+  @OneToMany(() => Transfer, (transfer) => transfer.calendar)
+  @Field(() => [Transfer])
+  transfers: Transfer[];
 
   @OneToMany(() => Trip, (trip) => trip.calendar)
   @Field(() => [Trip])

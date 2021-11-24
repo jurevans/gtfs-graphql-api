@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { StopTimes } from 'entities/stop-times.entity';
+import { StopTime } from 'entities/stop-time.entity';
 
 @Index('pickup_dropoff_types_pkey', ['typeId'], { unique: true })
 @Entity('pickup_dropoff_types', { schema: 'gtfs' })
@@ -14,11 +14,11 @@ export class PickupDropoffTypes {
   @Field({ nullable: true })
   description: string | null;
 
-  @OneToMany(() => StopTimes, (stopTimes) => stopTimes.dropOffType)
-  @Field(() => [StopTimes])
-  stopTimesByDropoffType: StopTimes[];
+  @OneToMany(() => StopTime, (stopTime) => stopTime.dropOffType)
+  @Field(() => [StopTime])
+  stopTimesByDropoffType: StopTime[];
 
-  @OneToMany(() => StopTimes, (stopTimes) => stopTimes.pickupType)
-  @Field(() => [StopTimes])
-  stopTimesByPickupType: StopTimes[];
+  @OneToMany(() => StopTime, (stopTime) => stopTime.pickupType)
+  @Field(() => [StopTime])
+  stopTimesByPickupType: StopTime[];
 }

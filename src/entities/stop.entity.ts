@@ -7,11 +7,11 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { StopTimes } from 'entities/stop-times.entity';
-import { LocationTypes } from 'entities/location-types.entity';
+import { StopTime } from 'entities/stop-time.entity';
+import { LocationType } from 'entities/location-type.entity';
 import { WheelchairAccessible } from 'entities/wheelchair-accessible.entity';
-import { WheelchairBoardings } from 'entities/wheelchair-boardings.entity';
-import { Transfers } from 'entities/transfers.entity';
+import { WheelchairBoarding } from 'entities/wheelchair-boarding.entity';
+import { Transfer } from 'entities/transfer.entity';
 
 @Index('stops_pkey', ['feedIndex', 'stopId'], { unique: true })
 @Entity('stops', { schema: 'gtfs' })
@@ -108,14 +108,14 @@ export class Stop {
   @Field({ nullable: true })
   theGeom: string | null;
 
-  @OneToMany(() => StopTimes, (stopTimes) => stopTimes.stops)
-  @Field(() => [StopTimes])
-  stopTimes: StopTimes[];
+  @OneToMany(() => StopTime, (stopTime) => stopTime.stops)
+  @Field(() => [StopTime])
+  stopTimes: StopTime[];
 
-  @ManyToOne(() => LocationTypes, (locationTypes) => locationTypes.stops)
+  @ManyToOne(() => LocationType, (locationType) => locationType.stops)
   @JoinColumn([{ name: 'location_type', referencedColumnName: 'locationType' }])
-  @Field(() => LocationTypes)
-  locationType: LocationTypes;
+  @Field(() => LocationType)
+  locationType: LocationType;
 
   @ManyToOne(
     () => WheelchairAccessible,
@@ -131,20 +131,20 @@ export class Stop {
   wheelchairAccessible: WheelchairAccessible;
 
   @ManyToOne(
-    () => WheelchairBoardings,
+    () => WheelchairBoarding,
     (wheelchairBoardings) => wheelchairBoardings.stops,
   )
   @JoinColumn([
     { name: 'wheelchair_boarding', referencedColumnName: 'wheelchairBoarding' },
   ])
-  @Field(() => WheelchairBoardings)
-  wheelchairBoarding: WheelchairBoardings;
+  @Field(() => WheelchairBoarding)
+  wheelchairBoarding: WheelchairBoarding;
 
-  @OneToMany(() => Transfers, (transfers) => transfers.fromStopId)
-  @Field(() => [Transfers])
-  transfersFrom: Transfers[];
+  @OneToMany(() => Transfer, (transfer) => transfer.fromStopId)
+  @Field(() => [Transfer])
+  transfersFrom: Transfer[];
 
-  @OneToMany(() => Transfers, (transfers) => transfers.toStopId)
-  @Field(() => [Transfers])
-  transfersTo: Transfers[];
+  @OneToMany(() => Transfer, (transfer) => transfer.toStopId)
+  @Field(() => [Transfer])
+  transfersTo: Transfer[];
 }

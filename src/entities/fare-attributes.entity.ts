@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 import { Agency } from 'entities/agency.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
-import { PaymentMethods } from 'entities/payment-methods.entity';
-import { FareRules } from 'entities/fare-rules.entity';
+import { PaymentMethod } from 'entities/payment-method.entity';
+import { FareRule } from 'entities/fare-rule.entity';
 
 @Index('fare_attributes_pkey', ['fareId', 'feedIndex'], { unique: true })
 @Entity('fare_attributes', { schema: 'gtfs' })
@@ -56,16 +56,16 @@ export class FareAttributes {
   feed: FeedInfo;
 
   @ManyToOne(
-    () => PaymentMethods,
-    (paymentMethods) => paymentMethods.fareAttributes,
+    () => PaymentMethod,
+    (paymentMethod) => paymentMethod.fareAttributes,
   )
   @JoinColumn([
     { name: 'payment_method', referencedColumnName: 'paymentMethod' },
   ])
-  @Field(() => PaymentMethods)
-  paymentMethod: PaymentMethods;
+  @Field(() => PaymentMethod)
+  paymentMethod: PaymentMethod;
 
-  @OneToMany(() => FareRules, (fareRules) => fareRules.fareAttributes)
-  @Field(() => [FareRules])
-  fareRules: FareRules[];
+  @OneToMany(() => FareRule, (fareRule) => fareRule.fareAttributes)
+  @Field(() => [FareRule])
+  fareRules: FareRule[];
 }

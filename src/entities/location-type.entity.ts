@@ -5,7 +5,7 @@ import { Stop } from 'entities/stop.entity';
 @Index('location_types_pkey', ['locationType'], { unique: true })
 @Entity('location_types', { schema: 'gtfs' })
 @ObjectType()
-export class LocationTypes {
+export class LocationType {
   @Column('integer', { primary: true, name: 'location_type' })
   @Field(() => Int)
   locationType: number;

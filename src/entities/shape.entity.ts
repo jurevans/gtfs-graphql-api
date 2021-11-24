@@ -8,7 +8,7 @@ import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 )
 @Entity('shapes', { schema: 'gtfs' })
 @ObjectType()
-export class Shapes {
+export class Shape {
   @Column('integer', { name: 'feed_index' })
   @Field(() => Int)
   feedIndex: number;

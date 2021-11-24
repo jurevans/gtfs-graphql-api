@@ -9,12 +9,12 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Frequencies } from 'entities/frequencies.entity';
-import { StopTimes } from 'entities/stop-times.entity';
+import { Frequency } from 'entities/frequency.entity';
+import { StopTime } from 'entities/stop-time.entity';
 import { Calendar } from 'entities/calendar.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
 import { Route } from 'entities/route.entity';
-import { Shapes } from 'entities/shapes.entity';
+import { Shape } from 'entities/shape.entity';
 import { WheelchairAccessible } from 'entities/wheelchair-accessible.entity';
 
 @Index('trips_pkey', ['feedIndex', 'tripId'], { unique: true })
@@ -79,13 +79,13 @@ export class Trip {
   @Field(() => Int, { nullable: true })
   bikesAllowed: number | null;
 
-  @OneToMany(() => Frequencies, (frequencies) => frequencies.trips)
-  @Field(() => [Frequencies])
-  frequencies: Frequencies[];
+  @OneToMany(() => Frequency, (frequency) => frequency.trips)
+  @Field(() => [Frequency])
+  frequencies: Frequency[];
 
-  @OneToMany(() => StopTimes, (stopTimes) => stopTimes.trips)
-  @Field(() => [StopTimes])
-  stopTimes: StopTimes[];
+  @OneToMany(() => StopTime, (stopTime) => stopTime.trips)
+  @Field(() => [StopTime])
+  stopTimes: StopTime[];
 
   @ManyToOne(() => Calendar, (calendar) => calendar.trips)
   @JoinColumn([
@@ -110,10 +110,10 @@ export class Trip {
   @Field(() => Route)
   route: Route;
 
-  @ManyToMany(() => Shapes)
+  @ManyToMany(() => Shape)
   @JoinTable({ name: 'shapes', joinColumns: [{ name: 'shape_id' }] })
-  @Field(() => [Shapes])
-  shapes: Shapes[];
+  @Field(() => [Shape])
+  shapes: Shape[];
 
   @ManyToOne(
     () => WheelchairAccessible,

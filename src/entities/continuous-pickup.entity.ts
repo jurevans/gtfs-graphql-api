@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { StopTimes } from 'entities/stop-times.entity';
+import { StopTime } from 'entities/stop-time.entity';
 
 @Index('continuous_pickup_pkey', ['continuousPickup'], { unique: true })
 @Entity('continuous_pickup', { schema: 'gtfs' })
@@ -14,7 +14,7 @@ export class ContinuousPickup {
   @Field({ nullable: true })
   description: string | null;
 
-  @OneToMany(() => StopTimes, (stopTimes) => stopTimes.continuousPickup)
-  @Field(() => [StopTimes])
-  stopTimes: StopTimes[];
+  @OneToMany(() => StopTime, (stopTime) => stopTime.continuousPickup)
+  @Field(() => [StopTime])
+  stopTimes: StopTime[];
 }

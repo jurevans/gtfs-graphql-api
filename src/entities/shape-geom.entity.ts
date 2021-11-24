@@ -4,7 +4,7 @@ import { Column, Entity, Index } from 'typeorm';
 @Index('shape_geom_pkey', ['feedIndex', 'shapeId'], { unique: true })
 @Entity('shape_geoms', { schema: 'gtfs' })
 @ObjectType()
-export class ShapeGeoms {
+export class ShapeGeom {
   @Column('integer', { primary: true, name: 'feed_index' })
   @Field(() => Int)
   feedIndex: number;

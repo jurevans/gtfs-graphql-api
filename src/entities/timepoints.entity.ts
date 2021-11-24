@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { StopTimes } from 'entities/stop-times.entity';
+import { StopTime } from 'entities/stop-time.entity';
 
 @Index('timepoints_pkey', ['timepoint'], { unique: true })
 @Entity('timepoints', { schema: 'gtfs' })
@@ -14,7 +14,7 @@ export class Timepoints {
   @Field({ nullable: true })
   description: string | null;
 
-  @OneToMany(() => StopTimes, (stopTimes) => stopTimes.timepoint)
-  @Field(() => [StopTimes])
-  stopTimes: StopTimes[];
+  @OneToMany(() => StopTime, (stopTime) => stopTime.timepoint)
+  @Field(() => [StopTime])
+  stopTimes: StopTime[];
 }

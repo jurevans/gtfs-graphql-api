@@ -15,7 +15,7 @@ import { Timepoints } from 'entities/timepoints.entity';
 @Index('stop_times_key', ['feedIndex', 'stopId', 'tripId'], {})
 @Entity('stop_times', { schema: 'gtfs' })
 @ObjectType()
-export class StopTimes {
+export class StopTime {
   @Column('integer', { primary: true, name: 'feed_index' })
   @Field(() => Int)
   feedIndex: number;

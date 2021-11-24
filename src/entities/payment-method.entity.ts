@@ -5,7 +5,7 @@ import { FareAttributes } from 'entities/fare-attributes.entity';
 @Index('payment_methods_pkey', ['paymentMethod'], { unique: true })
 @Entity('payment_methods', { schema: 'gtfs' })
 @ObjectType()
-export class PaymentMethods {
+export class PaymentMethod {
   @Column('integer', { primary: true, name: 'payment_method' })
   @Field(() => Int)
   paymentMethod: number;

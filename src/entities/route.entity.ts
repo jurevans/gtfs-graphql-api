@@ -7,11 +7,11 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { FareRules } from 'entities/fare-rules.entity';
+import { FareRule } from 'entities/fare-rule.entity';
 import { Agency } from 'entities/agency.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
-import { RouteTypes } from 'entities/routeTypes.entity';
-import { Transfers } from 'entities/transfers.entity';
+import { RouteType } from 'entities/routeType.entity';
+import { Transfer } from 'entities/transfer.entity';
 import { Trip } from 'entities/trip.entity';
 
 @Index('routes_pkey', ['feedIndex', 'routeId'], { unique: true })
@@ -62,9 +62,9 @@ export class Route {
   @Field({ nullable: true })
   routeSortOrder: number | null;
 
-  @OneToMany(() => FareRules, (fareRules) => fareRules.routes)
-  @Field(() => [FareRules])
-  fareRules: FareRules[];
+  @OneToMany(() => FareRule, (fareRule) => fareRule.routes)
+  @Field(() => [FareRule])
+  fareRules: FareRule[];
 
   @ManyToOne(() => Agency, (agency) => agency.routes)
   @JoinColumn([
@@ -81,14 +81,14 @@ export class Route {
   @Field(() => FeedInfo)
   feed: FeedInfo;
 
-  @ManyToOne(() => RouteTypes, (routeTypes) => routeTypes.routes)
+  @ManyToOne(() => RouteType, (routeTypes) => routeTypes.routes)
   @JoinColumn([{ name: 'route_type', referencedColumnName: 'routeType' }])
-  @Field(() => RouteTypes)
-  routeType: RouteTypes;
+  @Field(() => RouteType)
+  routeType: RouteType;
 
-  @OneToMany(() => Transfers, (transfers) => transfers.route)
-  @Field(() => [Transfers])
-  transfers: Transfers[];
+  @OneToMany(() => Transfer, (transfer) => transfer.route)
+  @Field(() => [Transfer])
+  transfers: Transfer[];
 
   @OneToMany(() => Trip, (trips) => trips.route)
   @Field(() => [Trip])

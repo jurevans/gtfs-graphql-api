@@ -7,13 +7,13 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ExceptionTypes } from 'entities/exception-types.entity';
+import { ExceptionType } from 'entities/exception-type.entity';
 import { Calendar } from 'entities/calendar.entity';
 
 @Index('calendar_dates_dateidx', ['date'], {})
 @Entity('calendar_dates', { schema: 'gtfs' })
 @ObjectType()
-export class CalendarDates {
+export class CalendarDate {
   @PrimaryGeneratedColumn('uuid')
   @Field({ nullable: true })
   id: string;
@@ -23,14 +23,14 @@ export class CalendarDates {
   date: string;
 
   @ManyToOne(
-    () => ExceptionTypes,
-    (exceptionTypes) => exceptionTypes.calendarDates,
+    () => ExceptionType,
+    (exceptionType) => exceptionType.calendarDates,
   )
   @JoinColumn([
     { name: 'exception_type', referencedColumnName: 'exceptionType' },
   ])
-  @Field(() => ExceptionTypes)
-  exceptionType: ExceptionTypes;
+  @Field(() => ExceptionType)
+  exceptionType: ExceptionType;
 
   @ManyToOne(() => Calendar, (calendar) => calendar.calendarDates)
   @JoinColumn([
