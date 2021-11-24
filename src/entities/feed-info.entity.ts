@@ -91,7 +91,8 @@ export class FeedInfo {
   @OneToMany(() => Frequencies, (frequencies) => frequencies.feedIndex2)
   frequencies: Frequencies[];
 
-  @OneToMany(() => Routes, (routes) => routes.feedIndex2)
+  @OneToMany(() => Routes, (routes) => routes.feed)
+  @Field(() => [Routes])
   routes: Routes[];
 
   @OneToMany(() => StopTimes, (stopTimes) => stopTimes.feedIndex2)
