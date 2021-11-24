@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import redisConfig from 'config/redis.config';
 import databaseConfig from 'config/database.config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -34,7 +32,5 @@ import { getConnectionOptions } from 'typeorm';
     }),
     FeedModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
