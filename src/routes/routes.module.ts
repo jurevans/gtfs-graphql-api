@@ -14,7 +14,7 @@ import { Route } from 'entities/route.entity';
       useFactory: (configService: ConfigService): CacheModuleOptions => ({
         store: redisStore,
         ...configService.get('redis'),
-        ttl: CacheTtlSeconds.THIRTY_SECONDS,
+        ttl: CacheTtlSeconds.ONE_HOUR,
       }),
       inject: [ConfigService],
     }),
