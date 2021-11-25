@@ -26,7 +26,7 @@ describe('formatCacheKey', () => {
 });
 
 describe('getCurrentDay', () => {
-  it('should return the correct day given an index', () => {
+  it('should return the correct day', () => {
     const daysOfWeek = [
       'sunday',
       'monday',
