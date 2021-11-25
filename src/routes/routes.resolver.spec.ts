@@ -2,8 +2,8 @@ import { CACHE_MANAGER } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Route } from 'entities/route.entity';
-import { RoutesResolver } from './routes.resolver';
-import { RoutesService } from './routes.service';
+import { RoutesResolver } from 'routes/routes.resolver';
+import { RoutesService } from 'routes/routes.service';
 
 describe('RoutesResolver', () => {
   let resolver: RoutesResolver;

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CACHE_MANAGER } from '@nestjs/common';
-import { TripsService } from './trips.service';
+import { TripsService } from 'trips/trips.service';
 import { Trip } from 'entities/trip.entity';
 
 describe('TripsService', () => {

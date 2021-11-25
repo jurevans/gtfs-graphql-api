@@ -103,8 +103,7 @@ type Stop {
   locationType: LocationType!
   wheelchairAccessible: WheelchairAccessible!
   wheelchairBoarding: WheelchairBoarding!
-  transfersFrom: [Transfer!]!
-  transfersTo: [Transfer!]!
+  transfers: [Transfer!]!
 }
 
 type Timepoints {
@@ -214,6 +213,7 @@ type Transfer {
   feed: FeedInfo!
   route: Route!
   transferType: TransferType!
+  transfersFrom: Stop!
 }
 
 type Calendar {
@@ -304,4 +304,6 @@ type Query {
   route(feedIndex: Int!, routeId: String!): Route!
   trips(feedIndex: Int!, routeId: String): [Trip!]!
   trip(feedIndex: Int!, tripId: String!): Trip!
+  stops(feedIndex: Int!, isParent: Boolean, isChild: Boolean, stopIds: [String!]): [Stop!]!
+  stop(feedIndex: Int!, stopId: String!): Stop!
 }

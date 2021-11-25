@@ -198,3 +198,129 @@ query {
   }
 }
 ```
+
+**NOTE**: A `Stop` can have a `parentStation` defined. A `parentStation` might be have a `stopId` of `101`, and two stops that have this as a `parentStation` might be `101N` and `101S`, indicating separate stops for each direction. We can specify all, only parents, and only children in the query using `isParent: true` or `isChild: true`, or omitting those values to get all stop entires:
+
+Get all stops:
+
+```graphql
+query {
+  stops(feedIndex: 1) {
+    stopId
+    stopName
+    theGeom {
+      type
+      coordinates
+    }
+  }
+}
+```
+
+Get all stops that are Parent Stations:
+
+```graphql
+query {
+  stops(feedIndex: 1, isParent: true) {
+    stopId
+    stopName
+    theGeom {
+      type
+      coordinates
+    }
+  }
+}
+```
+
+Get all stops that are _not_ Parent Stations:
+
+```graphql
+query {
+  stops(feedIndex: 1, isChild: true) {
+    stopId
+    stopName
+    theGeom {
+      type
+      coordinates
+    }
+  }
+}
+```
+
+Get a stop, along with its transfers:
+
+```graphql
+query {
+  stop(feedIndex: 1, stopId: "127") {
+    stopId
+    stopName
+    parentStation
+    theGeom {
+      coordinates
+    }
+    transfers {
+      toStopId
+      fromStopId
+      minTransferTime
+    }
+  }
+}
+```
+
+**NOTE**: If a stop _isn't_ a `parentStation`, transfers will be empty (at least according to the MTA data). Querying a parent station should yield a populated `transfers` array, however, there is always a `transfers` table entry for the stop itself, as you can see in the following data:
+
+```json
+{
+  "data": {
+    "stop": {
+      "stopId": "127",
+      "stopName": "Times Sq-42 St",
+      "parentStation": null,
+      "theGeom": {
+        "coordinates": [-73.987495, 40.75529]
+      },
+      "transfers": [
+        {
+          "toStopId": "127",
+          "fromStopId": "127",
+          "minTransferTime": 0
+        },
+        {
+          "toStopId": "725",
+          "fromStopId": "127",
+          "minTransferTime": 180
+        },
+        {
+          "toStopId": "902",
+          "fromStopId": "127",
+          "minTransferTime": 180
+        },
+        {
+          "toStopId": "A27",
+          "fromStopId": "127",
+          "minTransferTime": 300
+        },
+        {
+          "toStopId": "R16",
+          "fromStopId": "127",
+          "minTransferTime": 180
+        }
+      ]
+    }
+  }
+}
+```
+
+You can think of some of the stops in this object as a _Station_ in your client, those that share a common name, coordinate, etc, with others being nearby stations. A _Station_ can have multiple routes and stops serving it, as well as transfers. These transfers can be queried as such:
+
+```graphql
+query {
+  stops(feedIndex: 1, stopIds: ["127", "725", "902", "A27", "R16"]) {
+    stopId
+    stopName
+    theGeom {
+      type
+      coordinates
+    }
+  }
+}
+```

@@ -142,11 +142,7 @@ export class Stop {
   @Field(() => WheelchairBoarding)
   wheelchairBoarding: WheelchairBoarding;
 
-  @OneToMany(() => Transfer, (transfer) => transfer.fromStopId)
+  @OneToMany(() => Transfer, (transfer) => transfer.transfersFrom)
   @Field(() => [Transfer])
-  transfersFrom: Transfer[];
-
-  @OneToMany(() => Transfer, (transfer) => transfer.toStopId)
-  @Field(() => [Transfer])
-  transfersTo: Transfer[];
+  transfers: Transfer[];
 }

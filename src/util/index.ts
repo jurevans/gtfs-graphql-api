@@ -6,7 +6,7 @@
  */
 export const formatCacheKey = (
   keyPrefix: string,
-  args?: { [key: string]: string | number },
+  args?: { [key: string]: string | number | boolean },
 ): string => {
   if (!args) {
     return keyPrefix;

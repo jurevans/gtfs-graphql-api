@@ -11,6 +11,7 @@ import { Calendar } from 'entities/calendar.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
 import { Route } from 'entities/route.entity';
 import { TransferType } from 'entities/transfer-type.entity';
+import { Stop } from './stop.entity';
 
 @Index('transfers_pkey', ['feedIndex', 'fromStopId', 'toStopId'], {
   unique: true,
@@ -61,4 +62,9 @@ export class Transfer {
   @JoinColumn([{ name: 'transfer_type', referencedColumnName: 'transferType' }])
   @Field(() => TransferType)
   transferType: TransferType;
+
+  @ManyToOne(() => Stop, (stop) => stop.transfers)
+  @JoinColumn([{ name: 'from_stop_id', referencedColumnName: 'stopId' }])
+  @Field(() => Stop)
+  transfersFrom: Stop;
 }
