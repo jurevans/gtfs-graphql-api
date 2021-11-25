@@ -72,12 +72,18 @@ type WheelchairBoarding {
   stops: [Stop!]!
 }
 
+type Geometry {
+  type: String!
+  coordinates: [Float!]!
+}
+
 type Stop {
   feedIndex: Int!
   stopId: String!
   stopName: String
   stopDesc: String
-  stopLat: Int
+  stopLat: Float
+  stopLon: Float
   zoneId: String
   stopUrl: String
   stopCode: String
@@ -92,7 +98,7 @@ type Stop {
   parentStation: String
   vehicleType: Int
   platformCode: String
-  theGeom: String
+  theGeom: Geometry
   stopTimes: [StopTime!]!
   locationType: LocationType!
   wheelchairAccessible: WheelchairAccessible!
@@ -121,7 +127,7 @@ type StopTime {
   departureTimeSeconds: Int
   continuousPickup: ContinuousPickup!
   feed: FeedInfo!
-  stops: Stop!
+  stop: Stop!
   trips: Trip!
   dropOffType: PickupDropoffTypes!
   pickupType: PickupDropoffTypes!
@@ -282,4 +288,6 @@ type Query {
   feeds: [FeedInfo!]!
   routes(feedIndex: Int!): [Route!]!
   route(feedIndex: Int!, routeId: String!): Route!
+  trips(feedIndex: Int!): [Trip!]!
+  trip(feedIndex: Int!, tripId: String!): Trip!
 }

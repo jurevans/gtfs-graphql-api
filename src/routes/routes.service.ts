@@ -6,10 +6,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Route } from 'entities/route.entity';
 import { Cache } from 'cache-manager';
+import { Route } from 'entities/route.entity';
+import { GetRouteArgs, GetRoutesArgs } from 'routes/routes.args';
 import { CacheKeyPrefix } from 'constants/';
-import { GetRouteArgs, GetRoutesArgs } from './route.args';
 import { formatCacheKey } from 'util/';
 
 @Injectable()

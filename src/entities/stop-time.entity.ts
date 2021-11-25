@@ -88,7 +88,7 @@ export class StopTime {
     { name: 'stop_id', referencedColumnName: 'stopId' },
   ])
   @Field(() => Stop)
-  stops: Stop;
+  stop: Stop;
 
   @ManyToOne(() => Trip, (trip) => trip.stopTimes)
   @JoinColumn([
