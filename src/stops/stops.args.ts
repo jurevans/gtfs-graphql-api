@@ -10,7 +10,7 @@ export class GetStopsArgs extends FeedArgs {
   isChild: boolean;
 
   @Field(() => [String], { nullable: true })
-  stopIds?: string[];
+  stopIds: string[];
 }
 
 @ArgsType()
