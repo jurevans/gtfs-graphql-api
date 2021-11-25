@@ -10,6 +10,7 @@ import { Route } from 'entities/route.entity';
 import { Cache } from 'cache-manager';
 import { CacheKeyPrefix } from 'constants/';
 import { GetRouteArgs, GetRoutesArgs } from './route.args';
+import { formatCacheKey } from 'util/';
 
 @Injectable()
 export class RoutesService {
@@ -22,10 +23,9 @@ export class RoutesService {
 
   async findAll(args: GetRoutesArgs): Promise<Route[]> {
     const { feedIndex } = args;
+    const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex });
+    const routesInCache: Route[] = await this.cacheManager.get(key);
 
-    const routesInCache: Route[] = await this.cacheManager.get(
-      CacheKeyPrefix.ROUTES,
-    );
     if (routesInCache) {
       return routesInCache;
     }
@@ -40,13 +40,14 @@ export class RoutesService {
       },
       where: { feedIndex },
     });
-    this.cacheManager.set(CacheKeyPrefix.ROUTES, routes);
+
+    this.cacheManager.set(key, routes);
     return routes;
   }
 
   async find(args: GetRouteArgs): Promise<Route> {
     const { feedIndex, routeId } = args;
-    const key = `${CacheKeyPrefix.ROUTES}?routeId=${routeId}`;
+    const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex, routeId });
     const routeInCache: Route = await this.cacheManager.get(key);
     if (routeInCache) {
       return routeInCache;
