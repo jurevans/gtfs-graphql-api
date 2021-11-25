@@ -9,6 +9,12 @@ This is a GraphQL API that serves multiple [GTFS static feeds](https://gtfs.org/
 - [Configuring the cache store (Redis)](#configuring-the-cache-store)
 - [Configuring the database (PostgreSQL/PostGIS)](#configuring-the-database)
 - [Querying the GraphQL API](#querying-gtfs-data-in-graphql)
+  - [Querying Feeds](#querying-feeds)
+  - [Querying Routes](#querying-routes)
+  - [Querying Trips](#querying-trips)
+  - [Querying Stops](#querying-stops)
+    - [Stops with Transfers](#stops-with-transfers)
+    - [Querying multiple Stops](#querying-multiple-stops)
 
 ## Running the API
 
@@ -46,6 +52,8 @@ REDIS_PORT=6379
 REDIS_AUTH=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
+[ [Table of Contents](#table-of-contents) ]
+
 ## Configuring the database
 
 Example `.env` configuration:
@@ -81,6 +89,8 @@ make load GTFS=gtfs.zip
 
 Where `gtfs.zip` is the name of the downloaded `.zip` file containing the GTFS data.
 
+[ [Table of Contents](#table-of-contents) ]
+
 ## Querying GTFS data in GraphQL
 
 It should be fairly straight-forward to query GTFS data if you follow the specification laid out in detail [here](https://gtfs.org/reference/static/). You need to convert fields to camel-case (e.g., `route_id` => `routeId`), and use singular and plural depending on whether you want a single entity or multiple entities. Below are examples, along with cases where you can specify an addition parameter to query by, such as `trips`, which can take a `routeId` to only return trips for that route.
@@ -89,7 +99,11 @@ It should be fairly straight-forward to query GTFS data if you follow the specif
 
 **NOTE**: Generally, getting a group of entities will only return the top-level entity, except in cases such as Feeds where it might be useful to grab Agency and Route data. This may change, and I may add query parameters to make it easier to get more deeply nested structures if it seems useful and performant enough.
 
-Get all feeds, along with the associated Agency and Routes:
+[ [Table of Contents](#table-of-contents) ]
+
+### Querying Feeds
+
+Get all feeds, along with the associated Agency and Routes - this is the initial request, as `feedIndex` is required on all subsequent queries:
 
 ```graphql
 query {
@@ -110,6 +124,10 @@ query {
   }
 }
 ```
+
+[ [Table of Contents](#table-of-contents) ]
+
+### Querying Routes
 
 Get all Routes:
 
@@ -145,6 +163,10 @@ query {
   }
 }
 ```
+
+[ [Table of Contents](#table-of-contents) ]
+
+### Querying Trips
 
 Get all Trips:
 
@@ -199,6 +221,10 @@ query {
 }
 ```
 
+[ [Table of Contents](#table-of-contents) ]
+
+### Querying Stops
+
 **NOTE**: A `Stop` can have a `parentStation` defined. A `parentStation` might be have a `stopId` of `101`, and two stops that have this as a `parentStation` might be `101N` and `101S`, indicating separate stops for each direction. We can specify all, only parents, and only children in the query using `isParent: true` or `isChild: true`, or omitting those values to get all stop entires:
 
 Get all stops:
@@ -246,7 +272,11 @@ query {
 }
 ```
 
-Get a stop, along with its transfers:
+[ [Table of Contents](#table-of-contents) ]
+
+#### Stops with Transfers
+
+Get a stop, along with its transfers (and transfer-types, just to illustrate what that actually gives us):
 
 ```graphql
 query {
@@ -261,12 +291,16 @@ query {
       toStopId
       fromStopId
       minTransferTime
+      transferType {
+        transferType
+        description
+      }
     }
   }
 }
 ```
 
-**NOTE**: If a stop _isn't_ a `parentStation`, transfers will be empty (at least according to the MTA data). Querying a parent station should yield a populated `transfers` array, however, there is always a `transfers` table entry for the stop itself, as you can see in the following data:
+**NOTE**: If a stop _isn't_ a `parentStation`, transfers will be empty (at least according to the MTA data). Querying a parent station should yield a populated `transfers` array, however, there is always a `transfers` table entry for the stop itself (perhaps to transfer from Inbound to Outbound), as you can see in the following data:
 
 ```json
 {
@@ -282,33 +316,57 @@ query {
         {
           "toStopId": "127",
           "fromStopId": "127",
-          "minTransferTime": 0
+          "minTransferTime": 0,
+          "transferType": {
+            "transferType": 2,
+            "description": "Transfer possible with min_transfer_time window"
+          }
         },
         {
           "toStopId": "725",
           "fromStopId": "127",
-          "minTransferTime": 180
+          "minTransferTime": 180,
+          "transferType": {
+            "transferType": 2,
+            "description": "Transfer possible with min_transfer_time window"
+          }
         },
         {
           "toStopId": "902",
           "fromStopId": "127",
-          "minTransferTime": 180
+          "minTransferTime": 180,
+          "transferType": {
+            "transferType": 2,
+            "description": "Transfer possible with min_transfer_time window"
+          }
         },
         {
           "toStopId": "A27",
           "fromStopId": "127",
-          "minTransferTime": 300
+          "minTransferTime": 300,
+          "transferType": {
+            "transferType": 2,
+            "description": "Transfer possible with min_transfer_time window"
+          }
         },
         {
           "toStopId": "R16",
           "fromStopId": "127",
-          "minTransferTime": 180
+          "minTransferTime": 180,
+          "transferType": {
+            "transferType": 2,
+            "description": "Transfer possible with min_transfer_time window"
+          }
         }
       ]
     }
   }
 }
 ```
+
+[ [Table of Contents](#table-of-contents) ]
+
+#### Querying multiple Stops
 
 You can think of some of the stops in this object as a _Station_ in your client, those that share a common name, coordinate, etc, with others being nearby stations. A _Station_ can have multiple routes and stops serving it, as well as transfers. These transfers can be queried as such:
 
@@ -324,3 +382,56 @@ query {
   }
 }
 ```
+
+Which yields the following:
+
+```json
+{
+  "data": {
+    "stops": [
+      {
+        "stopId": "127",
+        "stopName": "Times Sq-42 St",
+        "theGeom": {
+          "type": "Point",
+          "coordinates": [-73.987495, 40.75529]
+        }
+      },
+      {
+        "stopId": "725",
+        "stopName": "Times Sq-42 St",
+        "theGeom": {
+          "type": "Point",
+          "coordinates": [-73.987691, 40.755477]
+        }
+      },
+      {
+        "stopId": "902",
+        "stopName": "Times Sq-42 St",
+        "theGeom": {
+          "type": "Point",
+          "coordinates": [-73.986229, 40.755983]
+        }
+      },
+      {
+        "stopId": "A27",
+        "stopName": "42 St-Port Authority Bus Terminal",
+        "theGeom": {
+          "type": "Point",
+          "coordinates": [-73.989735, 40.757308]
+        }
+      },
+      {
+        "stopId": "R16",
+        "stopName": "Times Sq-42 St",
+        "theGeom": {
+          "type": "Point",
+          "coordinates": [-73.986754, 40.754672]
+        }
+      }
+    ]
+  }
+}
+```
+
+[ [Table of Contents](#table-of-contents) ]
