@@ -4,9 +4,12 @@ import { join } from 'path';
 import redisConfig from 'config/redis.config';
 import databaseConfig from 'config/database.config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { FeedModule } from './feed/feed.module';
+import { FeedModule } from './feeds/feed.module';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
+import { RoutesModule } from './routes/routes.module';
+import { TripsModule } from './trips/trips.module';
+import { StopsModule } from './stops/stops.module';
 
 @Module({
   imports: [
@@ -31,6 +34,9 @@ import { getConnectionOptions } from 'typeorm';
       inject: [ConfigService],
     }),
     FeedModule,
+    RoutesModule,
+    TripsModule,
+    StopsModule,
   ],
 })
 export class AppModule {}

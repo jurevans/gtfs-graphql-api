@@ -1,5 +1,5 @@
 import { Query, Resolver } from '@nestjs/graphql';
-import { FeedService } from 'feed/feed.service';
+import { FeedService } from 'feeds/feed.service';
 import { FeedInfo } from 'entities/feed-info.entity';
 
 @Resolver(() => FeedInfo)

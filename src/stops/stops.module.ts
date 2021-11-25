@@ -1,15 +1,15 @@
 import { CacheModule, CacheModuleOptions, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
-import { FeedInfo } from 'entities/feed-info.entity';
+import { StopsService } from './stops.service';
+import { StopsResolver } from './stops.resolver';
+import { Stop } from 'entities/stop.entity';
 import { CacheTtlSeconds } from 'constants/';
-import { FeedResolver } from 'feed/feed.resolver';
-import { FeedService } from 'feed/feed.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FeedInfo]),
+    TypeOrmModule.forFeature([Stop]),
     CacheModule.registerAsync({
       useFactory: (configService: ConfigService): CacheModuleOptions => ({
         store: redisStore,
@@ -19,7 +19,6 @@ import { FeedService } from 'feed/feed.service';
       inject: [ConfigService],
     }),
   ],
-  exports: [TypeOrmModule],
-  providers: [FeedService, FeedResolver],
+  providers: [StopsResolver, StopsService],
 })
-export class FeedModule {}
+export class StopsModule {}

@@ -11,11 +11,6 @@ export enum CacheKeyPrefix {
   TRANSFERS = 'transfers',
   STOPS = 'stops',
   FEEDS = 'feeds',
+  ROUTES = 'routes',
+  TRIPS = 'trips',
 }
-
-export enum Intervals {
-  GTFS_TRIP_UPDATES = 30000,
-  GTFS_ALERTS = 60000,
-}
-
-export const MAX_MINUTES = 60;

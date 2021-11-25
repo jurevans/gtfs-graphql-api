@@ -278,13 +278,8 @@ type FeedInfo {
   trips: [Trip!]!
 }
 
-type CalendarDates {
-  id: String
-  date: String
-  exceptionType: ExceptionType!
-  calendar: Calendar!
-}
-
 type Query {
   feeds: [FeedInfo!]!
+  routes(feedIndex: Int!): [Route!]!
+  route(feedIndex: Int!, routeId: String!): Route!
 }
