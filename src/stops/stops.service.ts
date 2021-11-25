@@ -57,7 +57,7 @@ export class StopsService {
       options.where.parentStation = Not(IsNull());
     }
 
-    if (stopIds && stopIds.length > 0) {
+    if (stopIds.length > 0) {
       options.where.stopId = In(stopIds);
     }
 
@@ -80,6 +80,7 @@ export class StopsService {
         alias: 'stop',
         leftJoinAndSelect: {
           transfers: 'stop.transfers',
+          transferType: 'transfers.transferType',
         },
       },
       where: { feedIndex, stopId },
