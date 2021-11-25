@@ -22,17 +22,30 @@ export class TripsService {
   ) {}
 
   async findAll(args: GetTripsArgs): Promise<Trip[]> {
-    const { feedIndex } = args;
-    const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex });
+    const { feedIndex, routeId } = args;
+    const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex, routeId });
     const tripsInCache: Trip[] = await this.cacheManager.get(key);
 
     if (tripsInCache) {
       return tripsInCache;
     }
 
-    const trips: Trip[] = await this.tripRepository.find({
+    type Options = {
+      where: {
+        feedIndex: number;
+        routeId?: string;
+      };
+    };
+
+    const options: Options = {
       where: { feedIndex },
-    });
+    };
+
+    if (routeId) {
+      options.where.routeId = routeId;
+    }
+
+    const trips: Trip[] = await this.tripRepository.find(options);
 
     this.cacheManager.set(key, trips);
     return trips;
@@ -53,6 +66,8 @@ export class TripsService {
         leftJoinAndSelect: {
           route: 'trip.route',
           stopTimes: 'trip.stopTimes',
+          shape: 'trip.shape',
+          shapegeom: 'shape.shapeGeom',
           stop: 'stopTimes.stop',
         },
       },

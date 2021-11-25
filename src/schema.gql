@@ -72,7 +72,7 @@ type WheelchairBoarding {
   stops: [Stop!]!
 }
 
-type Geometry {
+type Point {
   type: String!
   coordinates: [Float!]!
 }
@@ -98,7 +98,7 @@ type Stop {
   parentStation: String
   vehicleType: Int
   platformCode: String
-  theGeom: Geometry
+  theGeom: Point
   stopTimes: [StopTime!]!
   locationType: LocationType!
   wheelchairAccessible: WheelchairAccessible!
@@ -134,13 +134,27 @@ type StopTime {
   timepoint: Timepoints!
 }
 
+type LineString {
+  type: String!
+  coordinates: [[Float!]!]!
+}
+
+type ShapeGeom {
+  feedIndex: Int
+  shapeId: String
+  length: String
+  theGeom: LineString!
+  shape: Shape!
+}
+
 type Shape {
-  feedIndex: Int!
-  shapeId: String!
-  shapePtLat: Int!
-  shapePtLon: Int!
-  shapePtSequence: Int!
-  shapeDistTraveled: Int
+  feedIndex: Int
+  shapeId: String
+  shapePtLat: Float
+  shapePtLon: Float
+  shapePtSequence: Int
+  shapeDistTraveled: Float
+  shapeGeom: ShapeGeom!
 }
 
 type Trip {
@@ -163,7 +177,7 @@ type Trip {
   calendar: Calendar!
   feed: FeedInfo!
   route: Route!
-  shapes: [Shape!]!
+  shape: Shape!
   wheelchairAccessible: WheelchairAccessible!
 }
 
@@ -288,6 +302,6 @@ type Query {
   feeds: [FeedInfo!]!
   routes(feedIndex: Int!): [Route!]!
   route(feedIndex: Int!, routeId: String!): Route!
-  trips(feedIndex: Int!): [Trip!]!
+  trips(feedIndex: Int!, routeId: String): [Trip!]!
   trip(feedIndex: Int!, tripId: String!): Trip!
 }

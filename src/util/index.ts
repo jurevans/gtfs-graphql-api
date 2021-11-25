@@ -13,6 +13,7 @@ export const formatCacheKey = (
   }
 
   return `${keyPrefix}?${Object.keys(args)
+    .filter((key: string) => args[key])
     .map((key: string) => `${key}=${args[key]}`)
     .join('&')}`;
 };

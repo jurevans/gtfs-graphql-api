@@ -3,14 +3,19 @@
  */
 export type ICoordinate = [number, number];
 
-export interface IGeometry {
-  type: 'LineString' | 'Point' | 'Polygon'; // There are others, but will not likely be used here
+export interface IPoint {
+  type: 'Point';
   coordinates: ICoordinate[];
+}
+
+export interface ILineString {
+  type: 'LineString';
+  coordinates: ICoordinate[][];
 }
 
 export interface IFeature {
   type: string;
-  geometry: IGeometry;
+  geometry: IPoint | ILineString;
   properties: {
     id: string;
     name: string;

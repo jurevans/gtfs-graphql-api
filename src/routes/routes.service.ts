@@ -31,13 +31,6 @@ export class RoutesService {
     }
 
     const routes: Route[] = await this.routeRepository.find({
-      join: {
-        alias: 'route',
-        leftJoinAndSelect: {
-          routeType: 'route.routeType',
-          transfers: 'route.transfers',
-        },
-      },
       where: { feedIndex },
     });
 

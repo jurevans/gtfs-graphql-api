@@ -12,7 +12,7 @@ import { LocationType } from 'entities/location-type.entity';
 import { WheelchairAccessible } from 'entities/wheelchair-accessible.entity';
 import { WheelchairBoarding } from 'entities/wheelchair-boarding.entity';
 import { Transfer } from 'entities/transfer.entity';
-import { Geometry } from 'entities/geometry.entity';
+import { Point } from 'entities/point.entity';
 
 @Index('stops_pkey', ['feedIndex', 'stopId'], { unique: true })
 @Entity('stops', { schema: 'gtfs' })
@@ -107,7 +107,7 @@ export class Stop {
   platformCode: string | null;
 
   @Column('geometry', { name: 'the_geom', nullable: true })
-  @Field(() => Geometry, { nullable: true })
+  @Field(() => Point, { nullable: true })
   theGeom: string | null;
 
   @OneToMany(() => StopTime, (stopTime) => stopTime.stop)
