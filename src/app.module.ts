@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import redisConfig from 'config/redis.config';
 import databaseConfig from 'config/database.config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { FeedModule } from './feed/feed.module';
+import { FeedModule } from './feeds/feed.module';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
+import { RoutesModule } from './routes/routes.module';
+import { TripsModule } from './trips/trips.module';
+import { StopsModule } from './stops/stops.module';
 
 @Module({
   imports: [
@@ -33,8 +34,9 @@ import { getConnectionOptions } from 'typeorm';
       inject: [ConfigService],
     }),
     FeedModule,
+    RoutesModule,
+    TripsModule,
+    StopsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

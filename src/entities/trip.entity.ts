@@ -4,8 +4,6 @@ import {
   Entity,
   Index,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
 } from 'typeorm';
@@ -110,10 +108,13 @@ export class Trip {
   @Field(() => Route)
   route: Route;
 
-  @ManyToMany(() => Shape)
-  @JoinTable({ name: 'shapes', joinColumns: [{ name: 'shape_id' }] })
-  @Field(() => [Shape])
-  shapes: Shape[];
+  @ManyToOne(() => Shape)
+  @JoinColumn([
+    { name: 'feed_index', referencedColumnName: 'feedIndex' },
+    { name: 'shape_id', referencedColumnName: 'shapeId' },
+  ])
+  @Field(() => Shape)
+  shape: Shape;
 
   @ManyToOne(
     () => WheelchairAccessible,

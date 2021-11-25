@@ -1,38 +1,16 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# GTFS GraphQL API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a GraphQL API that serves multiple [GTFS static feeds](https://gtfs.org/reference/static/) from a PostgreSQL database with the PostGIS extension enabled, allowing fetching of geometry data created from the static feeds.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+### Table of Contents
 
-## Description
+- [Running the API](#running-the-api)
+- [Testing the API](#testing-the-api)
+- [Configuring the cache store (Redis)](#configuring-the-cache-store)
+- [Configuring the database (PostgreSQL/PostGIS)](#configuring-the-database)
+- [Querying the GraphQL API](#querying-gtfs-data-in-graphql)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
+## Running the API
 
 ```bash
 # development
@@ -45,7 +23,7 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Testing the API
 
 ```bash
 # unit tests
@@ -58,16 +36,291 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Configuring the cache store
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+This API uses Redis for caching and session management, which can be configured in `.env`:
 
-## Stay in touch
+```bash
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_AUTH=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Configuring the database
 
-## License
+Example `.env` configuration:
 
-Nest is [MIT licensed](LICENSE).
+```bash
+DB_HOST=<hostname>
+DB_PORT=5432
+DB_USERNAME=<username>
+DB_PASSWORD=<password>
+DB_DATABASE=gtfs
+```
+
+This project depends on a PostgrSQL database populated using the gtfs-sql-importer: https://github.com/fitnr/gtfs-sql-importer. This requires a PostGIS-enabled PostgreSQL database.
+
+Basic usage is as follows (executed from within the repo):
+
+Export the following environment variables:
+
+```bash
+PGDATABASE=mydbname
+PGHOST=example.com
+PGUSER=username
+```
+
+(**NOTE**: You may need to export `PGPASSWORD=password` if not otherwise authenticated to use `psql`).
+
+Then:
+
+```bash
+make init
+make load GTFS=gtfs.zip
+```
+
+Where `gtfs.zip` is the name of the downloaded `.zip` file containing the GTFS data.
+
+## Querying GTFS data in GraphQL
+
+It should be fairly straight-forward to query GTFS data if you follow the specification laid out in detail [here](https://gtfs.org/reference/static/). You need to convert fields to camel-case (e.g., `route_id` => `routeId`), and use singular and plural depending on whether you want a single entity or multiple entities. Below are examples, along with cases where you can specify an addition parameter to query by, such as `trips`, which can take a `routeId` to only return trips for that route.
+
+**NOTE**: You must _always_ specify a `feedIndex`, unless you are querying for all feeds in the database.
+
+**NOTE**: Generally, getting a group of entities will only return the top-level entity, except in cases such as Feeds where it might be useful to grab Agency and Route data. This may change, and I may add query parameters to make it easier to get more deeply nested structures if it seems useful and performant enough.
+
+Get all feeds, along with the associated Agency and Routes:
+
+```graphql
+query {
+  feeds {
+    feedId
+    feedLang
+    agencies {
+      agencyId
+      agencyName
+      agencyUrl
+      agencyPhone
+    }
+    routes {
+      routeId
+      routeShortName
+      routeDesc
+    }
+  }
+}
+```
+
+Get all Routes:
+
+```graphql
+query {
+  routes(feedIndex: 1) {
+    routeId
+    routeDesc
+    routeColor
+  }
+}
+```
+
+Get a specific Route:
+
+```graphql
+query {
+  route(feedIndex: 1, routeId: "B") {
+    routeId
+    routeUrl
+    routeDesc
+    routeColor
+    routeShortName
+    routeLongName
+    routeType {
+      routeType
+      description
+    }
+    transfers {
+      fromStopId
+      toStopId
+    }
+  }
+}
+```
+
+Get all Trips:
+
+```graphql
+query {
+  trips(feedIndex: 1) {
+    tripId
+    tripHeadsign
+    routeId
+    tripType
+    directionId
+  }
+}
+```
+
+Get a Trip, along with Route info, StopTimes with their associated stop and stop Point geometry, as well as the geometries for the shape associated with this trip:
+
+```graphql
+query {
+  trip(feedIndex: 1, tripId: "ASP21GEN-1037-Sunday-00_000600_1..S03R") {
+    tripId
+    tripHeadsign
+    tripShortName
+    route {
+      routeId
+      routeDesc
+    }
+    shape {
+      shapeGeom {
+        shapeId
+        theGeom {
+          type
+          coordinates
+        }
+      }
+    }
+    stopTimes {
+      stopId
+      stopSequence
+      stop {
+        stopId
+        stopName
+        stopDesc
+        parentStation
+        theGeom {
+          type
+          coordinates
+        }
+      }
+    }
+  }
+}
+```
+
+**NOTE**: A `Stop` can have a `parentStation` defined. A `parentStation` might be have a `stopId` of `101`, and two stops that have this as a `parentStation` might be `101N` and `101S`, indicating separate stops for each direction. We can specify all, only parents, and only children in the query using `isParent: true` or `isChild: true`, or omitting those values to get all stop entires:
+
+Get all stops:
+
+```graphql
+query {
+  stops(feedIndex: 1) {
+    stopId
+    stopName
+    theGeom {
+      type
+      coordinates
+    }
+  }
+}
+```
+
+Get all stops that are Parent Stations:
+
+```graphql
+query {
+  stops(feedIndex: 1, isParent: true) {
+    stopId
+    stopName
+    theGeom {
+      type
+      coordinates
+    }
+  }
+}
+```
+
+Get all stops that are _not_ Parent Stations:
+
+```graphql
+query {
+  stops(feedIndex: 1, isChild: true) {
+    stopId
+    stopName
+    theGeom {
+      type
+      coordinates
+    }
+  }
+}
+```
+
+Get a stop, along with its transfers:
+
+```graphql
+query {
+  stop(feedIndex: 1, stopId: "127") {
+    stopId
+    stopName
+    parentStation
+    theGeom {
+      coordinates
+    }
+    transfers {
+      toStopId
+      fromStopId
+      minTransferTime
+    }
+  }
+}
+```
+
+**NOTE**: If a stop _isn't_ a `parentStation`, transfers will be empty (at least according to the MTA data). Querying a parent station should yield a populated `transfers` array, however, there is always a `transfers` table entry for the stop itself, as you can see in the following data:
+
+```json
+{
+  "data": {
+    "stop": {
+      "stopId": "127",
+      "stopName": "Times Sq-42 St",
+      "parentStation": null,
+      "theGeom": {
+        "coordinates": [-73.987495, 40.75529]
+      },
+      "transfers": [
+        {
+          "toStopId": "127",
+          "fromStopId": "127",
+          "minTransferTime": 0
+        },
+        {
+          "toStopId": "725",
+          "fromStopId": "127",
+          "minTransferTime": 180
+        },
+        {
+          "toStopId": "902",
+          "fromStopId": "127",
+          "minTransferTime": 180
+        },
+        {
+          "toStopId": "A27",
+          "fromStopId": "127",
+          "minTransferTime": 300
+        },
+        {
+          "toStopId": "R16",
+          "fromStopId": "127",
+          "minTransferTime": 180
+        }
+      ]
+    }
+  }
+}
+```
+
+You can think of some of the stops in this object as a _Station_ in your client, those that share a common name, coordinate, etc, with others being nearby stations. A _Station_ can have multiple routes and stops serving it, as well as transfers. These transfers can be queried as such:
+
+```graphql
+query {
+  stops(feedIndex: 1, stopIds: ["127", "725", "902", "A27", "R16"]) {
+    stopId
+    stopName
+    theGeom {
+      type
+      coordinates
+    }
+  }
+}
+```
