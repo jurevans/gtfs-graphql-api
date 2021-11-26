@@ -21,7 +21,7 @@ export class TripsService {
     private readonly tripRepository: Repository<Trip>,
   ) {}
 
-  async findAll(args: GetTripsArgs): Promise<Trip[]> {
+  async getTrips(args: GetTripsArgs): Promise<Trip[]> {
     const { feedIndex, routeId } = args;
     const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex, routeId });
     const tripsInCache: Trip[] = await this.cacheManager.get(key);
@@ -51,7 +51,7 @@ export class TripsService {
     return trips;
   }
 
-  async find(args: GetTripArgs): Promise<Trip> {
+  async getTrip(args: GetTripArgs): Promise<Trip> {
     const { feedIndex, tripId } = args;
     const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex, tripId });
     const tripInCache: Trip = await this.cacheManager.get(key);

@@ -6,13 +6,13 @@ import { GetStopArgs, GetStopsArgs } from 'stops/stops.args';
 export class StopsResolver {
   constructor(private readonly stopsService: StopsService) {}
 
-  @Query(() => [Stop])
-  stops(@Args() getStopsArgs: GetStopsArgs): Promise<Stop[]> {
-    return this.stopsService.findMany(getStopsArgs);
+  @Query(() => [Stop], { name: 'stops' })
+  getStops(@Args() getStopsArgs: GetStopsArgs): Promise<Stop[]> {
+    return this.stopsService.getStops(getStopsArgs);
   }
 
-  @Query(() => Stop)
-  stop(@Args() getStopArgs: GetStopArgs) {
-    return this.stopsService.find(getStopArgs);
+  @Query(() => Stop, { name: 'stop' })
+  getStop(@Args() getStopArgs: GetStopArgs): Promise<Stop> {
+    return this.stopsService.getStop(getStopArgs);
   }
 }

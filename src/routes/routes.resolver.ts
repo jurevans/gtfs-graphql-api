@@ -6,13 +6,13 @@ import { GetRouteArgs, GetRoutesArgs } from 'routes/routes.args';
 export class RoutesResolver {
   constructor(private readonly routesService: RoutesService) {}
 
-  @Query(() => [Route])
-  routes(@Args() getRoutesArgs: GetRoutesArgs): Promise<Route[]> {
-    return this.routesService.findAll(getRoutesArgs);
+  @Query(() => [Route], { name: 'routes' })
+  getRoutes(@Args() getRoutesArgs: GetRoutesArgs): Promise<Route[]> {
+    return this.routesService.getRoutes(getRoutesArgs);
   }
 
-  @Query(() => Route)
-  route(@Args() getRouteArgs: GetRouteArgs) {
-    return this.routesService.find(getRouteArgs);
+  @Query(() => Route, { name: 'route' })
+  getRoute(@Args() getRouteArgs: GetRouteArgs): Promise<Route> {
+    return this.routesService.getRoute(getRouteArgs);
   }
 }

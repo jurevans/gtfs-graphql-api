@@ -21,7 +21,7 @@ export class RoutesService {
     private readonly routeRepository: Repository<Route>,
   ) {}
 
-  async findAll(args: GetRoutesArgs): Promise<Route[]> {
+  async getRoutes(args: GetRoutesArgs): Promise<Route[]> {
     const { feedIndex } = args;
     const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex });
     const routesInCache: Route[] = await this.cacheManager.get(key);
@@ -38,7 +38,7 @@ export class RoutesService {
     return routes;
   }
 
-  async find(args: GetRouteArgs): Promise<Route> {
+  async getRoute(args: GetRouteArgs): Promise<Route> {
     const { feedIndex, routeId } = args;
     const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex, routeId });
     const routeInCache: Route = await this.cacheManager.get(key);
