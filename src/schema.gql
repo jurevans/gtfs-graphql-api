@@ -112,11 +112,17 @@ type Timepoints {
   stopTimes: [StopTime!]!
 }
 
+type Interval {
+  hours: Int
+  minutes: Int
+  seconds: Int
+}
+
 type StopTime {
   feedIndex: Int!
   tripId: String
-  arrivalTime: Int
-  departureTime: Int
+  arrivalTime: Interval
+  departureTime: Interval
   stopId: String
   stopSequence: Int
   stopHeadsign: String
@@ -302,7 +308,7 @@ type Query {
   feeds: [FeedInfo!]!
   routes(feedIndex: Int!): [Route!]!
   route(feedIndex: Int!, routeId: String!): Route!
-  trips(feedIndex: Int!, routeId: String): [Trip!]!
+  trips(feedIndex: Int!, routeId: String, serviceId: String): [Trip!]!
   trip(feedIndex: Int!, tripId: String!): Trip!
   stops(feedIndex: Int!, isParent: Boolean, isChild: Boolean, stopIds: [String!]): [Stop!]!
   stop(feedIndex: Int!, stopId: String!): Stop!

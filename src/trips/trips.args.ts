@@ -6,6 +6,9 @@ import { IsNotEmpty } from 'class-validator';
 export class GetTripsArgs extends FeedArgs {
   @Field({ nullable: true })
   routeId: string;
+
+  @Field({ nullable: true })
+  serviceId: string;
 }
 
 @ArgsType()

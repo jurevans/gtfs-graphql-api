@@ -22,8 +22,12 @@ export class TripsService {
   ) {}
 
   async getTrips(args: GetTripsArgs): Promise<Trip[]> {
-    const { feedIndex, routeId } = args;
-    const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex, routeId });
+    const { feedIndex, routeId, serviceId } = args;
+    const key = formatCacheKey(CacheKeyPrefix.ROUTES, {
+      feedIndex,
+      routeId,
+      serviceId,
+    });
     const tripsInCache: Trip[] = await this.cacheManager.get(key);
 
     if (tripsInCache) {
@@ -34,6 +38,7 @@ export class TripsService {
       where: {
         feedIndex: number;
         routeId?: string;
+        serviceId?: string;
       };
     };
 
@@ -45,8 +50,11 @@ export class TripsService {
       options.where.routeId = routeId;
     }
 
-    const trips: Trip[] = await this.tripRepository.find(options);
+    if (serviceId) {
+      options.where.serviceId = serviceId;
+    }
 
+    const trips: Trip[] = await this.tripRepository.find(options);
     this.cacheManager.set(key, trips);
     return trips;
   }
