@@ -10,7 +10,7 @@ import { Cache } from 'cache-manager';
 import { Trip } from 'entities/trip.entity';
 import { GetTripArgs, GetTripsArgs } from 'trips/trips.args';
 import { CacheKeyPrefix } from 'constants/';
-import { formatCacheKey } from 'util/';
+import { formatCacheKey, getCurrentDay } from 'util/';
 
 @Injectable()
 export class TripsService {
@@ -34,27 +34,22 @@ export class TripsService {
       return tripsInCache;
     }
 
-    type Options = {
-      where: {
-        feedIndex: number;
-        routeId?: string;
-        serviceId?: string;
-      };
-    };
-
-    const options: Options = {
-      where: { feedIndex },
-    };
+    const today = getCurrentDay();
+    const qb = this.tripRepository
+      .createQueryBuilder('t')
+      .innerJoinAndSelect('t.calendar', 'calendar')
+      .where('t.feedIndex=:feedIndex', { feedIndex })
+      .andWhere(`calendar.${today} = 1`);
 
     if (routeId) {
-      options.where.routeId = routeId;
+      qb.andWhere('t.routeId = :routeId', { routeId });
     }
 
     if (serviceId) {
-      options.where.serviceId = serviceId;
+      qb.andWhere('t.serviceId = :serviceId', { serviceId });
     }
 
-    const trips: Trip[] = await this.tripRepository.find(options);
+    const trips: Trip[] = await qb.getMany();
     this.cacheManager.set(key, trips);
     return trips;
   }
