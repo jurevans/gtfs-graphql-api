@@ -185,7 +185,7 @@ query {
 }
 ```
 
-Get a Trip, along with Route info, StopTimes with their associated stop and stop Point geometry, as well as the geometries for the shape associated with this trip:
+Get a Trip, along with Route info, StopTimes with their associated stop and stop Point geometry, as well as the geometries for the shape associated with this trip (this is a `LineString` GeoJSON geometry, providin an array of coordinates to make up a path):
 
 ```graphql
 query {
@@ -200,7 +200,7 @@ query {
     shape {
       shapeGeom {
         shapeId
-        theGeom {
+        geom {
           type
           coordinates
         }
@@ -214,7 +214,7 @@ query {
         stopName
         stopDesc
         parentStation
-        theGeom {
+        geom {
           type
           coordinates
         }
@@ -237,7 +237,7 @@ query {
   stops(feedIndex: 1) {
     stopId
     stopName
-    theGeom {
+    geom {
       type
       coordinates
     }
@@ -252,7 +252,7 @@ query {
   stops(feedIndex: 1, isParent: true) {
     stopId
     stopName
-    theGeom {
+    geom {
       type
       coordinates
     }
@@ -267,7 +267,7 @@ query {
   stops(feedIndex: 1, isChild: true) {
     stopId
     stopName
-    theGeom {
+    geom {
       type
       coordinates
     }
@@ -390,7 +390,7 @@ query {
   stops(feedIndex: 1, stopIds: ["127", "725", "902", "A27", "R16"]) {
     stopId
     stopName
-    theGeom {
+    geom {
       type
       coordinates
     }
@@ -407,7 +407,7 @@ Which yields the following:
       {
         "stopId": "127",
         "stopName": "Times Sq-42 St",
-        "theGeom": {
+        "geom": {
           "type": "Point",
           "coordinates": [-73.987495, 40.75529]
         }
@@ -415,7 +415,7 @@ Which yields the following:
       {
         "stopId": "725",
         "stopName": "Times Sq-42 St",
-        "theGeom": {
+        "geom": {
           "type": "Point",
           "coordinates": [-73.987691, 40.755477]
         }
@@ -423,7 +423,7 @@ Which yields the following:
       {
         "stopId": "902",
         "stopName": "Times Sq-42 St",
-        "theGeom": {
+        "geom": {
           "type": "Point",
           "coordinates": [-73.986229, 40.755983]
         }
@@ -431,7 +431,7 @@ Which yields the following:
       {
         "stopId": "A27",
         "stopName": "42 St-Port Authority Bus Terminal",
-        "theGeom": {
+        "geom": {
           "type": "Point",
           "coordinates": [-73.989735, 40.757308]
         }
@@ -439,7 +439,7 @@ Which yields the following:
       {
         "stopId": "R16",
         "stopName": "Times Sq-42 St",
-        "theGeom": {
+        "geom": {
           "type": "Point",
           "coordinates": [-73.986754, 40.754672]
         }

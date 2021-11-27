@@ -10,7 +10,7 @@ import { Cache } from 'cache-manager';
 import { Trip } from 'entities/trip.entity';
 import { GetTripArgs, GetTripsArgs } from 'trips/trips.args';
 import { CacheKeyPrefix } from 'constants/';
-import { formatCacheKey, getCurrentDay } from 'util/';
+import { formatCacheKey, getDayOfWeekForTimezone } from 'util/';
 
 @Injectable()
 export class TripsService {
@@ -34,7 +34,8 @@ export class TripsService {
       return tripsInCache;
     }
 
-    const today = getCurrentDay();
+    // TODO: Timezone should be dynamic, and match agencyTimezone:
+    const today = getDayOfWeekForTimezone('America/New_York');
     const qb = this.tripRepository
       .createQueryBuilder('t')
       .innerJoinAndSelect('t.calendar', 'calendar')

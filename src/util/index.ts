@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 /**
  * Format key by appending argument parameters/values to a key prefix
  * @param keyPrefix
@@ -19,10 +21,13 @@ export const formatCacheKey = (
 };
 
 /**
- * Get current day of the week (e.g., 'monday', 'tuesday', etc.)
+ * Get current day for a specific timezone. This should match
+ * the agencyTimezone value in the agencies table.
+ * @param timezone
  * @returns {string}
  */
-export const getCurrentDay = (): string => {
+export const getDayOfWeekForTimezone = (timezone: string): string => {
+  const datetime = DateTime.fromObject(null, { zone: timezone });
   const daysOfWeek = [
     'sunday',
     'monday',
@@ -32,6 +37,5 @@ export const getCurrentDay = (): string => {
     'friday',
     'saturday',
   ];
-  const today = daysOfWeek[new Date().getDay()];
-  return today;
+  return daysOfWeek[datetime.weekday];
 };

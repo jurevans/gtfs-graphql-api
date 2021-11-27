@@ -1,4 +1,4 @@
-import { formatCacheKey, getCurrentDay } from 'util/';
+import { formatCacheKey, getDayOfWeekForTimezone } from 'util/';
 import { CacheKeyPrefix } from 'constants/';
 
 describe('formatCacheKey', () => {
@@ -25,7 +25,7 @@ describe('formatCacheKey', () => {
   });
 });
 
-describe('getCurrentDay', () => {
+describe('getDayOfWeekForTimezone', () => {
   it('should return the correct day', () => {
     const daysOfWeek = [
       'sunday',
@@ -38,6 +38,6 @@ describe('getCurrentDay', () => {
     ];
     const today = daysOfWeek[new Date().getDay()];
 
-    expect(getCurrentDay()).toBe(today);
+    expect(getDayOfWeekForTimezone('America/New_York')).toBe(today);
   });
 });
