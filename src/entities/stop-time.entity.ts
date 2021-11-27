@@ -103,7 +103,7 @@ export class StopTime {
     { name: 'trip_id', referencedColumnName: 'tripId' },
   ])
   @Field(() => Trip)
-  trips: Trip;
+  trip: Trip;
 
   @ManyToOne(
     () => PickupDropoffTypes,

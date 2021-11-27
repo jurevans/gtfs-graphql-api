@@ -15,6 +15,7 @@ This is a GraphQL API that serves multiple [GTFS static feeds](https://gtfs.org/
   - [Querying Stops](#querying-stops)
     - [Stops with Transfers](#stops-with-transfers)
     - [Querying multiple Stops](#querying-multiple-stops)
+- [Entity Relationship Diagram](#generated-erd)
 
 ## Running the API
 
@@ -66,7 +67,7 @@ DB_PASSWORD=<password>
 DB_DATABASE=gtfs
 ```
 
-This project depends on a PostgrSQL database populated using the gtfs-sql-importer: https://github.com/fitnr/gtfs-sql-importer. This requires a PostGIS-enabled PostgreSQL database.
+This project depends on a PostgrSQL database populated using the [gtfs-sql-importer](https://github.com/fitnr/gtfs-sql-importer). This requires a PostGIS-enabled PostgreSQL database.
 
 Basic usage is as follows (executed from within the repo):
 
@@ -88,6 +89,8 @@ make load GTFS=gtfs.zip
 ```
 
 Where `gtfs.zip` is the name of the downloaded `.zip` file containing the GTFS data.
+
+### View the entity relationship diagram (ERD) generated for the created database [here](#generated-erd).
 
 [ [Table of Contents](#table-of-contents) ]
 
@@ -284,8 +287,14 @@ query {
     stopId
     stopName
     parentStation
-    theGeom {
+    stopTimezone
+    geom {
+      type
       coordinates
+    }
+    locationType {
+      locationType
+      description
     }
     transfers {
       toStopId
@@ -309,8 +318,14 @@ query {
       "stopId": "127",
       "stopName": "Times Sq-42 St",
       "parentStation": null,
-      "theGeom": {
+      "stopTimezone": null,
+      "geom": {
+        "type": "Point",
         "coordinates": [-73.987495, 40.75529]
+      },
+      "locationType": {
+        "locationType": 1,
+        "description": "station"
       },
       "transfers": [
         {
@@ -368,7 +383,7 @@ query {
 
 #### Querying multiple Stops
 
-You can think of some of the stops in this object as a _Station_ in your client, those that share a common name, coordinate, etc, with others being nearby stations. A _Station_ can have multiple routes and stops serving it, as well as transfers. These transfers can be queried as such:
+You can see in the `locationType` section above that the `locationType` is `station`. For "child" stops (e.g., `127N` or `127S`), you would have a `locationType` of `stop`. We've also recieved an array of "stations" that are available for transfer after the `minTransferTime` value (in seconds). These transfers can be queried together for additional detail as such:
 
 ```graphql
 query {
@@ -433,5 +448,12 @@ Which yields the following:
   }
 }
 ```
+
+[ [Table of Contents](#table-of-contents) ]
+
+## Generated ERD
+
+The generated ERD of the PostgreSQL/PostGIS database:
+![Generated ERD of GTFS Database](https://imgur.com/xn6JbgA.png)
 
 [ [Table of Contents](#table-of-contents) ]

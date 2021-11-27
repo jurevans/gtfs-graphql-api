@@ -81,7 +81,7 @@ export class Trip {
   @Field(() => [Frequency])
   frequencies: Frequency[];
 
-  @OneToMany(() => StopTime, (stopTime) => stopTime.trips)
+  @OneToMany(() => StopTime, (stopTime) => stopTime.trip)
   @Field(() => [StopTime])
   stopTimes: StopTime[];
 

@@ -80,6 +80,7 @@ export class StopsService {
         alias: 'stop',
         leftJoinAndSelect: {
           transfers: 'stop.transfers',
+          locationType: 'stop.locationType',
           transferType: 'transfers.transferType',
         },
       },

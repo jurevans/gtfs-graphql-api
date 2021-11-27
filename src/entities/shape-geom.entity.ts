@@ -21,7 +21,7 @@ export class ShapeGeom {
 
   @Column('geometry', { name: 'the_geom', nullable: true })
   @Field(() => LineString)
-  theGeom: string | null;
+  geom: string | null;
 
   @OneToOne(() => Shape, (shape) => shape.shapeGeom)
   @Field(() => Shape)
