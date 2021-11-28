@@ -67,9 +67,23 @@ DB_PASSWORD=<password>
 DB_DATABASE=gtfs
 ```
 
-This project depends on a PostgrSQL database populated using the [gtfs-sql-importer](https://github.com/fitnr/gtfs-sql-importer). This requires a PostGIS-enabled PostgreSQL database.
+This project depends on a PostgrSQL database populated using the [gtfs-sql-importer](https://github.com/fitnr/gtfs-sql-importer). This requires a PostGIS-enabled PostgreSQL database:
 
-Basic usage is as follows (executed from within the repo):
+```bash
+# Switch to user "postgres"
+sudo su postgres
+
+# Run psql
+psql
+
+# From the psql prompt, select database
+psql> \c gtfs_db
+
+# Create PostGIS extension
+CREATE EXTENSION postgis
+```
+
+Basic usage of `gtfs-sql-importer` is as follows (executed from within the repo):
 
 Export the following environment variables:
 
@@ -77,15 +91,14 @@ Export the following environment variables:
 PGDATABASE=mydbname
 PGHOST=example.com
 PGUSER=username
+PGPASSWORD=password
 ```
 
-(**NOTE**: You may need to export `PGPASSWORD=password` if not otherwise authenticated to use `psql`).
-
-Then:
+Then, from the root directory of `gtfs-sql-importer/`:
 
 ```bash
 make init
-make load GTFS=gtfs.zip
+make load GTFS=/path/to/gtfs.zip
 ```
 
 Where `gtfs.zip` is the name of the downloaded `.zip` file containing the GTFS data.
