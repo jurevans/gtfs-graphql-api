@@ -52,7 +52,7 @@ This API requires an `x-api-key` header to be sent with a valid key. These keys 
 API_KEYS=1XXXXXXXXXXXXXX,2XXXXXXXXXXXXXX,3XXXXXXXXXXXXXX
 ```
 
-I am using the [Insomnia](https://insomnia.rest/) client, however, if you want to use the GraphQL Playground interface in your browser, you can send this header with [ModHeader](https://modheader.com/) extension.
+I am using the [Insomnia](https://insomnia.rest/) client, however, if you want to use the GraphQL Playground interface in your browser, you can send this header with [ModHeader](https://modheader.com/) extension. If you use ModHeader, you can add an `x-api-key` request header, then add a Filter with a URL Pattern of `http:\/\/localhost:4000\/graphql` to authenticate.
 
 ## Configuring the cache store
 
