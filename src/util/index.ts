@@ -37,5 +37,5 @@ export const getDayOfWeekForTimezone = (zone: string): string => {
     'friday',
     'saturday',
   ];
-  return daysOfWeek[datetime.weekday];
+  return daysOfWeek[datetime.weekday - 1];
 };

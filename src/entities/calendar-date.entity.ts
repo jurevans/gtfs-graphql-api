@@ -16,7 +16,7 @@ import { Calendar } from 'entities/calendar.entity';
 export class CalendarDate {
   @PrimaryGeneratedColumn('uuid')
   @Field({ nullable: true })
-  id: string;
+  calendarDatesId: string;
 
   @Column('date', { name: 'date' })
   @Field({ nullable: true })

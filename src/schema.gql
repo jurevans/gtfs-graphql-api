@@ -15,7 +15,7 @@ type ExceptionType {
 }
 
 type CalendarDate {
-  id: String
+  calendarDatesId: String
   date: String
   exceptionType: ExceptionType!
   calendar: Calendar!
@@ -242,7 +242,7 @@ type Calendar {
 }
 
 type FareRule {
-  id: String
+  fareRulesId: String
   originId: String
   destinationId: String
   containsId: String

@@ -6,6 +6,7 @@ This is a GraphQL API that serves multiple [GTFS static feeds](https://gtfs.org/
 
 - [Running the API](#running-the-api)
 - [Testing the API](#testing-the-api)
+- [Configuring authentication](#configuring-authentication)
 - [Configuring the cache store (Redis)](#configuring-the-cache-store)
 - [Configuring the database (PostgreSQL/PostGIS)](#configuring-the-database)
 - [Querying the GraphQL API](#querying-gtfs-data-in-graphql)
@@ -42,6 +43,16 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## Configuring Authentication
+
+This API requires an `x-api-key` header to be sent with a valid key. These keys are defined in an `API_KEYS` variable in `.env`, separated by commas:
+
+```bash
+API_KEYS=1XXXXXXXXXXXXXX,2XXXXXXXXXXXXXX,3XXXXXXXXXXXXXX
+```
+
+I am using the [Insomnia](https://insomnia.rest/) client, however, if you want to use the GraphQL Playground interface in your browser, you can send this header with [ModHeader](https://modheader.com/) extension.
 
 ## Configuring the cache store
 
