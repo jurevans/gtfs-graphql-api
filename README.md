@@ -122,7 +122,7 @@ It should be fairly straight-forward to query GTFS data if you follow the specif
 Get all feeds, along with the associated Agency and Routes - this is the initial request, as `feedIndex` is required on all subsequent queries:
 
 ```graphql
-query {
+{
   feeds {
     feedId
     feedLang
@@ -148,7 +148,7 @@ query {
 Get all Routes:
 
 ```graphql
-query {
+{
   routes(feedIndex: 1) {
     routeId
     routeDesc
@@ -160,7 +160,7 @@ query {
 Get a specific Route:
 
 ```graphql
-query {
+{
   route(feedIndex: 1, routeId: "B") {
     routeId
     routeUrl
@@ -187,7 +187,7 @@ query {
 Get all Trips:
 
 ```graphql
-query {
+{
   trips(feedIndex: 1) {
     tripId
     tripHeadsign
@@ -201,7 +201,7 @@ query {
 Get a Trip, along with Route info, StopTimes with their associated stop and stop Point geometry, as well as the geometries for the shape associated with this trip (this is a `LineString` GeoJSON geometry, providin an array of coordinates to make up a path):
 
 ```graphql
-query {
+{
   trip(feedIndex: 1, tripId: "ASP21GEN-1037-Sunday-00_000600_1..S03R") {
     tripId
     tripHeadsign
@@ -246,7 +246,7 @@ query {
 Get all stops:
 
 ```graphql
-query {
+{
   stops(feedIndex: 1) {
     stopId
     stopName
@@ -261,7 +261,7 @@ query {
 Get all stops that are Parent Stations:
 
 ```graphql
-query {
+{
   stops(feedIndex: 1, isParent: true) {
     stopId
     stopName
@@ -276,7 +276,7 @@ query {
 Get all stops that are _not_ Parent Stations:
 
 ```graphql
-query {
+{
   stops(feedIndex: 1, isChild: true) {
     stopId
     stopName
@@ -295,7 +295,7 @@ query {
 Get a stop, along with its transfers (and transfer-types, just to illustrate what that actually gives us):
 
 ```graphql
-query {
+{
   stop(feedIndex: 1, stopId: "127") {
     stopId
     stopName
@@ -399,7 +399,7 @@ query {
 You can see in the `locationType` section above that the `locationType` is `station`. For "child" stops (e.g., `127N` or `127S`), you would have a `locationType` of `stop`. We've also recieved an array of "stations" that are available for transfer after the `minTransferTime` value (in seconds). These transfers can be queried together for additional detail as such:
 
 ```graphql
-query {
+{
   stops(feedIndex: 1, stopIds: ["127", "725", "902", "A27", "R16"]) {
     stopId
     stopName
