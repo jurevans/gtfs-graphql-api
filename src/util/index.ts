@@ -23,11 +23,11 @@ export const formatCacheKey = (
 /**
  * Get current day for a specific timezone. This should match
  * the agencyTimezone value in the agencies table.
- * @param timezone
+ * @param zone
  * @returns {string}
  */
-export const getDayOfWeekForTimezone = (timezone: string): string => {
-  const datetime = DateTime.fromObject(null, { zone: timezone });
+export const getDayOfWeekForTimezone = (zone: string): string => {
+  const datetime = DateTime.fromObject(null, { zone });
   const daysOfWeek = [
     'sunday',
     'monday',
