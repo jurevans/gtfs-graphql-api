@@ -29,13 +29,13 @@ export const formatCacheKey = (
 export const getDayOfWeekForTimezone = (zone: string): string => {
   const datetime = DateTime.fromObject(null, { zone });
   const daysOfWeek = [
-    'sunday',
     'monday',
     'tuesday',
     'wednesday',
     'thursday',
     'friday',
     'saturday',
+    'sunday',
   ];
   return daysOfWeek[datetime.weekday - 1];
 };
