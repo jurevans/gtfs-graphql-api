@@ -15,6 +15,7 @@ import { Calendar } from 'entities/calendar.entity';
 @ObjectType()
 export class CalendarDate {
   @PrimaryGeneratedColumn('uuid')
+  @Column('uuid', { primary: true, name: 'calendar_dates_id' })
   @Field({ nullable: true })
   calendarDatesId: string;
 
@@ -29,7 +30,7 @@ export class CalendarDate {
   @JoinColumn([
     { name: 'exception_type', referencedColumnName: 'exceptionType' },
   ])
-  @Field(() => ExceptionType)
+  @Field(() => ExceptionType, { nullable: true })
   exceptionType: ExceptionType;
 
   @ManyToOne(() => Calendar, (calendar) => calendar.calendarDates)

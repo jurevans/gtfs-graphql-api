@@ -15,6 +15,7 @@ import { Route } from 'entities/route.entity';
 @ObjectType()
 export class FareRule {
   @PrimaryGeneratedColumn('uuid')
+  @Column('uuid', { primary: true, name: 'fare_rules_id' })
   @Field({ nullable: true })
   fareRulesId: string;
 

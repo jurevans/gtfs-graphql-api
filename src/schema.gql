@@ -17,7 +17,7 @@ type ExceptionType {
 type CalendarDate {
   calendarDatesId: String
   date: String
-  exceptionType: ExceptionType!
+  exceptionType: ExceptionType
   calendar: Calendar!
 }
 
