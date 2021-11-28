@@ -1,11 +1,14 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+import { IPostgresInterval } from 'postgres-interval';
+import { intervalTransformer } from 'transformers/';
 import { ContinuousPickup } from 'entities/continuous-pickup.entity';
 import { PickupDropoffTypes } from 'entities/pickup-dropoff-types.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
 import { Stop } from 'entities/stop.entity';
 import { Trip } from 'entities/trip.entity';
 import { Timepoints } from 'entities/timepoints.entity';
+import { Interval } from 'entities/interval.entity';
 
 @Index('arr_time_index', ['arrivalTimeSeconds'], {})
 @Index('dep_time_index', ['departureTimeSeconds'], {})
@@ -24,13 +27,17 @@ export class StopTime {
   @Field({ nullable: true })
   tripId: string;
 
-  @Column('interval', { name: 'arrival_time', nullable: true })
-  @Field(() => Int, { nullable: true })
-  arrivalTime: any | null;
+  @Column('interval', {
+    name: 'arrival_time',
+    nullable: true,
+    transformer: intervalTransformer,
+  })
+  @Field(() => Interval, { nullable: true })
+  arrivalTime: IPostgresInterval | null;
 
   @Column('interval', { name: 'departure_time', nullable: true })
-  @Field(() => Int, { nullable: true })
-  departureTime: any | null;
+  @Field(() => Interval, { nullable: true })
+  departureTime: IPostgresInterval | null;
 
   @Column('text', { name: 'stop_id', nullable: true })
   @Field({ nullable: true })
@@ -96,7 +103,7 @@ export class StopTime {
     { name: 'trip_id', referencedColumnName: 'tripId' },
   ])
   @Field(() => Trip)
-  trips: Trip;
+  trip: Trip;
 
   @ManyToOne(
     () => PickupDropoffTypes,

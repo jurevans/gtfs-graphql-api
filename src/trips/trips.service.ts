@@ -10,7 +10,7 @@ import { Cache } from 'cache-manager';
 import { Trip } from 'entities/trip.entity';
 import { GetTripArgs, GetTripsArgs } from 'trips/trips.args';
 import { CacheKeyPrefix } from 'constants/';
-import { formatCacheKey } from 'util/';
+import { formatCacheKey, getDayOfWeekForTimezone } from 'util/';
 
 @Injectable()
 export class TripsService {
@@ -21,37 +21,41 @@ export class TripsService {
     private readonly tripRepository: Repository<Trip>,
   ) {}
 
-  async findAll(args: GetTripsArgs): Promise<Trip[]> {
-    const { feedIndex, routeId } = args;
-    const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex, routeId });
+  async getTrips(args: GetTripsArgs): Promise<Trip[]> {
+    const { feedIndex, routeId, serviceId } = args;
+    const key = formatCacheKey(CacheKeyPrefix.ROUTES, {
+      feedIndex,
+      routeId,
+      serviceId,
+    });
     const tripsInCache: Trip[] = await this.cacheManager.get(key);
 
     if (tripsInCache) {
       return tripsInCache;
     }
 
-    type Options = {
-      where: {
-        feedIndex: number;
-        routeId?: string;
-      };
-    };
-
-    const options: Options = {
-      where: { feedIndex },
-    };
+    // TODO: Timezone should be dynamic, and match agencyTimezone:
+    const today = getDayOfWeekForTimezone('America/New_York');
+    const qb = this.tripRepository
+      .createQueryBuilder('t')
+      .innerJoinAndSelect('t.calendar', 'calendar')
+      .where('t.feedIndex=:feedIndex', { feedIndex })
+      .andWhere(`calendar.${today} = 1`);
 
     if (routeId) {
-      options.where.routeId = routeId;
+      qb.andWhere('t.routeId = :routeId', { routeId });
     }
 
-    const trips: Trip[] = await this.tripRepository.find(options);
+    if (serviceId) {
+      qb.andWhere('t.serviceId = :serviceId', { serviceId });
+    }
 
+    const trips: Trip[] = await qb.getMany();
     this.cacheManager.set(key, trips);
     return trips;
   }
 
-  async find(args: GetTripArgs): Promise<Trip> {
+  async getTrip(args: GetTripArgs): Promise<Trip> {
     const { feedIndex, tripId } = args;
     const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex, tripId });
     const tripInCache: Trip = await this.cacheManager.get(key);

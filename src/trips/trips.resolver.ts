@@ -7,13 +7,13 @@ import { TripsService } from './trips.service';
 export class TripsResolver {
   constructor(private readonly tripsService: TripsService) {}
 
-  @Query(() => [Trip])
-  trips(@Args() getTripsArgs: GetTripsArgs): Promise<Trip[]> {
-    return this.tripsService.findAll(getTripsArgs);
+  @Query(() => [Trip], { name: 'trips' })
+  getTrips(@Args() getTripsArgs: GetTripsArgs): Promise<Trip[]> {
+    return this.tripsService.getTrips(getTripsArgs);
   }
 
-  @Query(() => Trip)
-  trip(@Args() getTripArgs: GetTripArgs) {
-    return this.tripsService.find(getTripArgs);
+  @Query(() => Trip, { name: 'trip' })
+  getTrip(@Args() getTripArgs: GetTripArgs): Promise<Trip> {
+    return this.tripsService.getTrip(getTripArgs);
   }
 }

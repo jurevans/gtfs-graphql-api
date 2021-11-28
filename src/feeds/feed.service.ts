@@ -14,7 +14,7 @@ export class FeedService {
     private readonly feedRepository: Repository<FeedInfo>,
   ) {}
 
-  public async findAll(): Promise<FeedInfo[]> {
+  public async getFeeds(): Promise<FeedInfo[]> {
     const feedsInCache: FeedInfo[] = await this.cacheManager.get(
       CacheKeyPrefix.FEEDS,
     );

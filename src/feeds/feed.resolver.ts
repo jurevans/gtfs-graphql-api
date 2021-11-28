@@ -6,8 +6,8 @@ import { FeedInfo } from 'entities/feed-info.entity';
 export class FeedResolver {
   constructor(private readonly feedService: FeedService) {}
 
-  @Query(() => [FeedInfo])
-  feeds() {
-    return this.feedService.findAll();
+  @Query(() => [FeedInfo], { name: 'feeds' })
+  getFeeds(): Promise<FeedInfo[]> {
+    return this.feedService.getFeeds();
   }
 }

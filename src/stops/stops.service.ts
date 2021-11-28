@@ -21,7 +21,7 @@ export class StopsService {
     private readonly stopRepository: Repository<Stop>,
   ) {}
 
-  async findMany(args: GetStopsArgs): Promise<Stop[]> {
+  async getStops(args: GetStopsArgs): Promise<Stop[]> {
     const { feedIndex, isParent, isChild, stopIds = [] } = args;
     const key = formatCacheKey(CacheKeyPrefix.STOPS, {
       feedIndex,
@@ -67,7 +67,7 @@ export class StopsService {
     return stops;
   }
 
-  async find(args: GetStopArgs): Promise<Stop> {
+  async getStop(args: GetStopArgs): Promise<Stop> {
     const { feedIndex, stopId } = args;
     const key = formatCacheKey(CacheKeyPrefix.STOPS, { feedIndex, stopId });
     const stopInCache: Stop = await this.cacheManager.get(key);
@@ -80,6 +80,7 @@ export class StopsService {
         alias: 'stop',
         leftJoinAndSelect: {
           transfers: 'stop.transfers',
+          locationType: 'stop.locationType',
           transferType: 'transfers.transferType',
         },
       },

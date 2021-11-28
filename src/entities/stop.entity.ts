@@ -108,7 +108,7 @@ export class Stop {
 
   @Column('geometry', { name: 'the_geom', nullable: true })
   @Field(() => Point, { nullable: true })
-  theGeom: string | null;
+  geom: string | null;
 
   @OneToMany(() => StopTime, (stopTime) => stopTime.stop)
   @Field(() => [StopTime])

@@ -15,6 +15,7 @@ This is a GraphQL API that serves multiple [GTFS static feeds](https://gtfs.org/
   - [Querying Stops](#querying-stops)
     - [Stops with Transfers](#stops-with-transfers)
     - [Querying multiple Stops](#querying-multiple-stops)
+- [Entity Relationship Diagram](#generated-erd)
 
 ## Running the API
 
@@ -66,7 +67,7 @@ DB_PASSWORD=<password>
 DB_DATABASE=gtfs
 ```
 
-This project depends on a PostgrSQL database populated using the gtfs-sql-importer: https://github.com/fitnr/gtfs-sql-importer. This requires a PostGIS-enabled PostgreSQL database.
+This project depends on a PostgrSQL database populated using the [gtfs-sql-importer](https://github.com/fitnr/gtfs-sql-importer). This requires a PostGIS-enabled PostgreSQL database.
 
 Basic usage is as follows (executed from within the repo):
 
@@ -88,6 +89,8 @@ make load GTFS=gtfs.zip
 ```
 
 Where `gtfs.zip` is the name of the downloaded `.zip` file containing the GTFS data.
+
+### View the entity relationship diagram (ERD) generated for the created database [here](#generated-erd).
 
 [ [Table of Contents](#table-of-contents) ]
 
@@ -182,7 +185,7 @@ query {
 }
 ```
 
-Get a Trip, along with Route info, StopTimes with their associated stop and stop Point geometry, as well as the geometries for the shape associated with this trip:
+Get a Trip, along with Route info, StopTimes with their associated stop and stop Point geometry, as well as the geometries for the shape associated with this trip (this is a `LineString` GeoJSON geometry, providin an array of coordinates to make up a path):
 
 ```graphql
 query {
@@ -197,7 +200,7 @@ query {
     shape {
       shapeGeom {
         shapeId
-        theGeom {
+        geom {
           type
           coordinates
         }
@@ -211,7 +214,7 @@ query {
         stopName
         stopDesc
         parentStation
-        theGeom {
+        geom {
           type
           coordinates
         }
@@ -234,7 +237,7 @@ query {
   stops(feedIndex: 1) {
     stopId
     stopName
-    theGeom {
+    geom {
       type
       coordinates
     }
@@ -249,7 +252,7 @@ query {
   stops(feedIndex: 1, isParent: true) {
     stopId
     stopName
-    theGeom {
+    geom {
       type
       coordinates
     }
@@ -264,7 +267,7 @@ query {
   stops(feedIndex: 1, isChild: true) {
     stopId
     stopName
-    theGeom {
+    geom {
       type
       coordinates
     }
@@ -284,8 +287,14 @@ query {
     stopId
     stopName
     parentStation
-    theGeom {
+    stopTimezone
+    geom {
+      type
       coordinates
+    }
+    locationType {
+      locationType
+      description
     }
     transfers {
       toStopId
@@ -309,8 +318,14 @@ query {
       "stopId": "127",
       "stopName": "Times Sq-42 St",
       "parentStation": null,
-      "theGeom": {
+      "stopTimezone": null,
+      "geom": {
+        "type": "Point",
         "coordinates": [-73.987495, 40.75529]
+      },
+      "locationType": {
+        "locationType": 1,
+        "description": "station"
       },
       "transfers": [
         {
@@ -368,14 +383,14 @@ query {
 
 #### Querying multiple Stops
 
-You can think of some of the stops in this object as a _Station_ in your client, those that share a common name, coordinate, etc, with others being nearby stations. A _Station_ can have multiple routes and stops serving it, as well as transfers. These transfers can be queried as such:
+You can see in the `locationType` section above that the `locationType` is `station`. For "child" stops (e.g., `127N` or `127S`), you would have a `locationType` of `stop`. We've also recieved an array of "stations" that are available for transfer after the `minTransferTime` value (in seconds). These transfers can be queried together for additional detail as such:
 
 ```graphql
 query {
   stops(feedIndex: 1, stopIds: ["127", "725", "902", "A27", "R16"]) {
     stopId
     stopName
-    theGeom {
+    geom {
       type
       coordinates
     }
@@ -392,7 +407,7 @@ Which yields the following:
       {
         "stopId": "127",
         "stopName": "Times Sq-42 St",
-        "theGeom": {
+        "geom": {
           "type": "Point",
           "coordinates": [-73.987495, 40.75529]
         }
@@ -400,7 +415,7 @@ Which yields the following:
       {
         "stopId": "725",
         "stopName": "Times Sq-42 St",
-        "theGeom": {
+        "geom": {
           "type": "Point",
           "coordinates": [-73.987691, 40.755477]
         }
@@ -408,7 +423,7 @@ Which yields the following:
       {
         "stopId": "902",
         "stopName": "Times Sq-42 St",
-        "theGeom": {
+        "geom": {
           "type": "Point",
           "coordinates": [-73.986229, 40.755983]
         }
@@ -416,7 +431,7 @@ Which yields the following:
       {
         "stopId": "A27",
         "stopName": "42 St-Port Authority Bus Terminal",
-        "theGeom": {
+        "geom": {
           "type": "Point",
           "coordinates": [-73.989735, 40.757308]
         }
@@ -424,7 +439,7 @@ Which yields the following:
       {
         "stopId": "R16",
         "stopName": "Times Sq-42 St",
-        "theGeom": {
+        "geom": {
           "type": "Point",
           "coordinates": [-73.986754, 40.754672]
         }
@@ -433,5 +448,12 @@ Which yields the following:
   }
 }
 ```
+
+[ [Table of Contents](#table-of-contents) ]
+
+## Generated ERD
+
+The generated ERD of the PostgreSQL/PostGIS database:
+![Generated ERD of GTFS Database](https://imgur.com/xn6JbgA.png)
 
 [ [Table of Contents](#table-of-contents) ]

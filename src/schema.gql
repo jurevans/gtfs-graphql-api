@@ -98,7 +98,7 @@ type Stop {
   parentStation: String
   vehicleType: Int
   platformCode: String
-  theGeom: Point
+  geom: Point
   stopTimes: [StopTime!]!
   locationType: LocationType!
   wheelchairAccessible: WheelchairAccessible!
@@ -112,11 +112,17 @@ type Timepoints {
   stopTimes: [StopTime!]!
 }
 
+type Interval {
+  hours: Int
+  minutes: Int
+  seconds: Int
+}
+
 type StopTime {
   feedIndex: Int!
   tripId: String
-  arrivalTime: Int
-  departureTime: Int
+  arrivalTime: Interval
+  departureTime: Interval
   stopId: String
   stopSequence: Int
   stopHeadsign: String
@@ -127,7 +133,7 @@ type StopTime {
   continuousPickup: ContinuousPickup!
   feed: FeedInfo!
   stop: Stop!
-  trips: Trip!
+  trip: Trip!
   dropOffType: PickupDropoffTypes!
   pickupType: PickupDropoffTypes!
   timepoint: Timepoints!
@@ -142,7 +148,7 @@ type ShapeGeom {
   feedIndex: Int
   shapeId: String
   length: String
-  theGeom: LineString!
+  geom: LineString!
   shape: Shape!
 }
 
@@ -302,7 +308,7 @@ type Query {
   feeds: [FeedInfo!]!
   routes(feedIndex: Int!): [Route!]!
   route(feedIndex: Int!, routeId: String!): Route!
-  trips(feedIndex: Int!, routeId: String): [Trip!]!
+  trips(feedIndex: Int!, routeId: String, serviceId: String): [Trip!]!
   trip(feedIndex: Int!, tripId: String!): Trip!
   stops(feedIndex: Int!, isParent: Boolean, isChild: Boolean, stopIds: [String!]): [Stop!]!
   stop(feedIndex: Int!, stopId: String!): Stop!
