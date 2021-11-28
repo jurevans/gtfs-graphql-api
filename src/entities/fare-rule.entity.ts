@@ -15,8 +15,9 @@ import { Route } from 'entities/route.entity';
 @ObjectType()
 export class FareRule {
   @PrimaryGeneratedColumn('uuid')
+  @Column('uuid', { primary: true, name: 'fare_rules_id' })
   @Field({ nullable: true })
-  id: string;
+  fareRulesId: string;
 
   @Column('text', { name: 'origin_id', nullable: true })
   @Field({ nullable: true })

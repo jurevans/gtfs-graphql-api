@@ -6,6 +6,7 @@ This is a GraphQL API that serves multiple [GTFS static feeds](https://gtfs.org/
 
 - [Running the API](#running-the-api)
 - [Testing the API](#testing-the-api)
+- [Configuring authentication](#configuring-authentication)
 - [Configuring the cache store (Redis)](#configuring-the-cache-store)
 - [Configuring the database (PostgreSQL/PostGIS)](#configuring-the-database)
 - [Querying the GraphQL API](#querying-gtfs-data-in-graphql)
@@ -42,6 +43,16 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## Configuring Authentication
+
+This API requires an `x-api-key` header to be sent with a valid key. These keys are defined in an `API_KEYS` variable in `.env`, separated by commas:
+
+```bash
+API_KEYS=1XXXXXXXXXXXXXX,2XXXXXXXXXXXXXX,3XXXXXXXXXXXXXX
+```
+
+I am using the [Insomnia](https://insomnia.rest/) client, however, if you want to use the GraphQL Playground interface in your browser, you can send this header with [ModHeader](https://modheader.com/) extension. If you use ModHeader, you can add an `x-api-key` request header, then add a Filter with a URL Pattern of `http:\/\/localhost:4000\/graphql` to authenticate.
 
 ## Configuring the cache store
 
@@ -122,7 +133,7 @@ It should be fairly straight-forward to query GTFS data if you follow the specif
 Get all feeds, along with the associated Agency and Routes - this is the initial request, as `feedIndex` is required on all subsequent queries:
 
 ```graphql
-query {
+{
   feeds {
     feedId
     feedLang
@@ -148,7 +159,7 @@ query {
 Get all Routes:
 
 ```graphql
-query {
+{
   routes(feedIndex: 1) {
     routeId
     routeDesc
@@ -160,7 +171,7 @@ query {
 Get a specific Route:
 
 ```graphql
-query {
+{
   route(feedIndex: 1, routeId: "B") {
     routeId
     routeUrl
@@ -187,7 +198,7 @@ query {
 Get all Trips:
 
 ```graphql
-query {
+{
   trips(feedIndex: 1) {
     tripId
     tripHeadsign
@@ -201,7 +212,7 @@ query {
 Get a Trip, along with Route info, StopTimes with their associated stop and stop Point geometry, as well as the geometries for the shape associated with this trip (this is a `LineString` GeoJSON geometry, providin an array of coordinates to make up a path):
 
 ```graphql
-query {
+{
   trip(feedIndex: 1, tripId: "ASP21GEN-1037-Sunday-00_000600_1..S03R") {
     tripId
     tripHeadsign
@@ -246,7 +257,7 @@ query {
 Get all stops:
 
 ```graphql
-query {
+{
   stops(feedIndex: 1) {
     stopId
     stopName
@@ -261,7 +272,7 @@ query {
 Get all stops that are Parent Stations:
 
 ```graphql
-query {
+{
   stops(feedIndex: 1, isParent: true) {
     stopId
     stopName
@@ -276,7 +287,7 @@ query {
 Get all stops that are _not_ Parent Stations:
 
 ```graphql
-query {
+{
   stops(feedIndex: 1, isChild: true) {
     stopId
     stopName
@@ -295,7 +306,7 @@ query {
 Get a stop, along with its transfers (and transfer-types, just to illustrate what that actually gives us):
 
 ```graphql
-query {
+{
   stop(feedIndex: 1, stopId: "127") {
     stopId
     stopName
@@ -399,7 +410,7 @@ query {
 You can see in the `locationType` section above that the `locationType` is `station`. For "child" stops (e.g., `127N` or `127S`), you would have a `locationType` of `stop`. We've also recieved an array of "stations" that are available for transfer after the `minTransferTime` value (in seconds). These transfers can be queried together for additional detail as such:
 
 ```graphql
-query {
+{
   stops(feedIndex: 1, stopIds: ["127", "725", "902", "A27", "R16"]) {
     stopId
     stopName
