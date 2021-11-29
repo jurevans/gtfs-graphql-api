@@ -126,7 +126,7 @@ type StopTime {
   stopId: String
   stopSequence: Int
   stopHeadsign: String
-  shapeDistTraveled: String
+  shapeDistTraveled: Float
   continuousDropOff: Int
   arrivalTimeSeconds: Int
   departureTimeSeconds: Int

@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { IPostgresInterval } from 'postgres-interval';
 import { intervalTransformer } from 'transformers/';
@@ -57,8 +57,8 @@ export class StopTime {
     precision: 10,
     scale: 2,
   })
-  @Field({ nullable: true })
-  shapeDistTraveled: string | null;
+  @Field(() => Float, { nullable: true })
+  shapeDistTraveled: number | null;
 
   @Column('integer', { name: 'continuous_drop_off', nullable: true })
   @Field(() => Int, { nullable: true })

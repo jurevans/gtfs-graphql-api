@@ -86,6 +86,7 @@ export class TripsService {
           route: 'trip.route',
           stopTimes: 'trip.stopTimes',
           stop: 'stopTimes.stop',
+          locationType: 'stop.locationType',
         },
       },
     });
