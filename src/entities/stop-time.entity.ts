@@ -7,7 +7,7 @@ import { PickupDropoffTypes } from 'entities/pickup-dropoff-types.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
 import { Stop } from 'entities/stop.entity';
 import { Trip } from 'entities/trip.entity';
-import { Timepoints } from 'entities/timepoints.entity';
+import { Timepoint } from 'entities/timepoint.entity';
 import { Interval } from 'entities/interval.entity';
 
 @Index('arr_time_index', ['arrivalTimeSeconds'], {})
@@ -121,8 +121,8 @@ export class StopTime {
   @Field(() => PickupDropoffTypes)
   pickupType: PickupDropoffTypes;
 
-  @ManyToOne(() => Timepoints, (timepoints) => timepoints.stopTimes)
+  @ManyToOne(() => Timepoint, (timepoint) => timepoint.stopTimes)
   @JoinColumn([{ name: 'timepoint', referencedColumnName: 'timepoint' }])
-  @Field(() => Timepoints)
-  timepoint: Timepoints;
+  @Field(() => Timepoint)
+  timepoint: Timepoint;
 }

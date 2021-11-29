@@ -106,7 +106,7 @@ type Stop {
   transfers: [Transfer!]!
 }
 
-type Timepoints {
+type Timepoint {
   timepoint: Int!
   description: String
   stopTimes: [StopTime!]!
@@ -136,7 +136,7 @@ type StopTime {
   trip: Trip!
   dropOffType: PickupDropoffTypes!
   pickupType: PickupDropoffTypes!
-  timepoint: Timepoints!
+  timepoint: Timepoint!
 }
 
 type LineString {
