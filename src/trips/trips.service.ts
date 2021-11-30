@@ -11,14 +11,20 @@ import { Trip } from 'entities/trip.entity';
 import { GetTripArgs, GetTripsArgs } from 'trips/trips.args';
 import { CacheKeyPrefix } from 'constants/';
 import { formatCacheKey, getDayOfWeekForTimezone } from 'util/';
+import { StopTime } from 'entities/stop-time.entity';
+import { Calendar } from 'entities/calendar.entity';
 
 @Injectable()
 export class TripsService {
   constructor(
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+    @InjectRepository(StopTime)
+    private readonly stopTimeRepository: Repository<StopTime>,
     @InjectRepository(Trip)
     private readonly tripRepository: Repository<Trip>,
+    @InjectRepository(Calendar)
+    private readonly calendarRepository: Repository<Calendar>,
   ) {}
 
   async getTrips(args: GetTripsArgs): Promise<Trip[]> {
@@ -34,23 +40,35 @@ export class TripsService {
       return tripsInCache;
     }
 
-    // TODO: Timezone should be dynamic, and match agencyTimezone:
-    const today = getDayOfWeekForTimezone('America/New_York');
-    const qb = this.tripRepository
+    const tripsQB = this.tripRepository
       .createQueryBuilder('t')
-      .innerJoinAndSelect('t.calendar', 'calendar')
-      .where('t.feedIndex=:feedIndex', { feedIndex })
-      .andWhere(`calendar.${today} = 1`);
+      .where('t.feedIndex=:feedIndex', { feedIndex });
 
     if (routeId) {
-      qb.andWhere('t.routeId = :routeId', { routeId });
+      tripsQB.andWhere('t.routeId = :routeId', { routeId });
     }
 
     if (serviceId) {
-      qb.andWhere('t.serviceId = :serviceId', { serviceId });
+      tripsQB.andWhere('t.serviceId = :serviceId', { serviceId });
+    } else {
+      // Collect serviceIds for current date in calendar
+      const today = getDayOfWeekForTimezone('America/New_York');
+      const calendarQB = this.calendarRepository
+        .createQueryBuilder('c')
+        .select(['c.serviceId'])
+        .where(`c.${today}=1`)
+        .andWhere('c.feedIndex=:feedIndex', { feedIndex });
+
+      const serviceIds: string[] = await (
+        await calendarQB.getMany()
+      ).map((calendar: Calendar) => calendar.serviceId);
+
+      if (serviceIds.length > 0) {
+        tripsQB.andWhere('t.serviceId IN (:...serviceIds)', { serviceIds });
+      }
     }
 
-    const trips: Trip[] = await qb.getMany();
+    const trips: Trip[] = await tripsQB.getMany();
     this.cacheManager.set(key, trips);
     return trips;
   }
@@ -70,9 +88,8 @@ export class TripsService {
         leftJoinAndSelect: {
           route: 'trip.route',
           stopTimes: 'trip.stopTimes',
-          shape: 'trip.shape',
-          shapegeom: 'shape.shapeGeom',
           stop: 'stopTimes.stop',
+          locationType: 'stop.locationType',
         },
       },
     });

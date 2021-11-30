@@ -5,7 +5,7 @@ import { StopTime } from 'entities/stop-time.entity';
 @Index('timepoints_pkey', ['timepoint'], { unique: true })
 @Entity('timepoints', { schema: 'gtfs' })
 @ObjectType()
-export class Timepoints {
+export class Timepoint {
   @Column('integer', { primary: true, name: 'timepoint' })
   @Field(() => Int)
   timepoint: number;

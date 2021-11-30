@@ -37,7 +37,7 @@ type Frequency {
   startTimeSeconds: Int
   endTimeSeconds: Int
   feed: FeedInfo!
-  trips: Trip!
+  trip: Trip!
 }
 
 type ContinuousPickup {
@@ -106,7 +106,7 @@ type Stop {
   transfers: [Transfer!]!
 }
 
-type Timepoints {
+type Timepoint {
   timepoint: Int!
   description: String
   stopTimes: [StopTime!]!
@@ -126,7 +126,7 @@ type StopTime {
   stopId: String
   stopSequence: Int
   stopHeadsign: String
-  shapeDistTraveled: String
+  shapeDistTraveled: Float
   continuousDropOff: Int
   arrivalTimeSeconds: Int
   departureTimeSeconds: Int
@@ -136,7 +136,7 @@ type StopTime {
   trip: Trip!
   dropOffType: PickupDropoffTypes!
   pickupType: PickupDropoffTypes!
-  timepoint: Timepoints!
+  timepoint: Timepoint!
 }
 
 type LineString {

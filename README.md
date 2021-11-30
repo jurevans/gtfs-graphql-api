@@ -209,7 +209,7 @@ Get all Trips:
 }
 ```
 
-Get a Trip, along with Route info, StopTimes with their associated stop and stop Point geometry, as well as the geometries for the shape associated with this trip (this is a `LineString` GeoJSON geometry, providin an array of coordinates to make up a path):
+Get a Trip, along with Route info, StopTimes with their associated stop and `Point` geometry:
 
 ```graphql
 {
@@ -221,20 +221,10 @@ Get a Trip, along with Route info, StopTimes with their associated stop and stop
       routeId
       routeDesc
     }
-    shape {
-      shapeGeom {
-        shapeId
-        geom {
-          type
-          coordinates
-        }
-      }
-    }
     stopTimes {
       stopId
       stopSequence
       stop {
-        stopId
         stopName
         stopDesc
         parentStation
@@ -242,6 +232,11 @@ Get a Trip, along with Route info, StopTimes with their associated stop and stop
           type
           coordinates
         }
+      }
+      departureTime {
+        hours
+        minutes
+        seconds
       }
     }
   }

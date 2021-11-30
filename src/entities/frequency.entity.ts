@@ -54,5 +54,5 @@ export class Frequency {
     { name: 'trip_id', referencedColumnName: 'tripId' },
   ])
   @Field(() => Trip)
-  trips: Trip;
+  trip: Trip;
 }

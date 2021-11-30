@@ -77,7 +77,7 @@ export class Trip {
   @Field(() => Int, { nullable: true })
   bikesAllowed: number | null;
 
-  @OneToMany(() => Frequency, (frequency) => frequency.trips)
+  @OneToMany(() => Frequency, (frequency) => frequency.trip)
   @Field(() => [Frequency])
   frequencies: Frequency[];
 
