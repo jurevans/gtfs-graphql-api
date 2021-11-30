@@ -11,6 +11,7 @@ import { Trip } from 'entities/trip.entity';
 import { GetTripArgs, GetTripsArgs } from 'trips/trips.args';
 import { CacheKeyPrefix } from 'constants/';
 import { formatCacheKey, getDayOfWeekForTimezone } from 'util/';
+import { StopTime } from 'entities/stop-time.entity';
 import { Calendar } from 'entities/calendar.entity';
 
 @Injectable()
@@ -18,6 +19,8 @@ export class TripsService {
   constructor(
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+    @InjectRepository(StopTime)
+    private readonly stopTimeRepository: Repository<StopTime>,
     @InjectRepository(Trip)
     private readonly tripRepository: Repository<Trip>,
     @InjectRepository(Calendar)

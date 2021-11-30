@@ -37,7 +37,7 @@ type Frequency {
   startTimeSeconds: Int
   endTimeSeconds: Int
   feed: FeedInfo!
-  trips: Trip!
+  trip: Trip!
 }
 
 type ContinuousPickup {

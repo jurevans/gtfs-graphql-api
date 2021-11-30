@@ -5,12 +5,13 @@ import * as redisStore from 'cache-manager-redis-store';
 import { TripsService } from 'trips/trips.service';
 import { TripsResolver } from 'trips/trips.resolver';
 import { Trip } from 'entities/trip.entity';
+import { StopTime } from 'entities/stop-time.entity';
 import { Calendar } from 'entities/calendar.entity';
 import { CacheTtlSeconds } from 'constants/';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Trip, Calendar]),
+    TypeOrmModule.forFeature([Trip, StopTime, Calendar]),
     CacheModule.registerAsync({
       useFactory: (configService: ConfigService): CacheModuleOptions => ({
         store: redisStore,
