@@ -16,7 +16,7 @@ export class GetTripsArgs {
 
 @ArgsType()
 export class GetTripArgs {
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   @Min(1)
   feedIndex: number;
 
@@ -27,7 +27,7 @@ export class GetTripArgs {
 
 @ArgsType()
 export class GetNextTripArgs {
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   @Min(1)
   feedIndex: number;
 

@@ -1,12 +1,19 @@
-import { ArgsType, Field } from '@nestjs/graphql';
-import { FeedArgs } from 'args/feed.args';
-import { IsNotEmpty } from 'class-validator';
+import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { IsNotEmpty, Min } from 'class-validator';
 
 @ArgsType()
-export class GetRoutesArgs extends FeedArgs {}
+export class GetRoutesArgs {
+  @Field(() => Int)
+  @Min(1)
+  feedIndex: number;
+}
 
 @ArgsType()
-export class GetRouteArgs extends FeedArgs {
+export class GetRouteArgs {
+  @Field(() => Int, { nullable: true })
+  @Min(1)
+  feedIndex: number;
+
   @Field()
   @IsNotEmpty()
   routeId: string;

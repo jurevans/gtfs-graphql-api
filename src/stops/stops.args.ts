@@ -1,9 +1,12 @@
-import { ArgsType, Field } from '@nestjs/graphql';
-import { FeedArgs } from 'args/feed.args';
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { IsArray, IsNotEmpty, Min } from 'class-validator';
 
 @ArgsType()
-export class GetStopsArgs extends FeedArgs {
+export class GetStopsArgs {
+  @Field(() => Int)
+  @Min(1)
+  feedIndex: number;
+
   @Field({ nullable: true })
   isParent: boolean;
 
@@ -16,7 +19,11 @@ export class GetStopsArgs extends FeedArgs {
 }
 
 @ArgsType()
-export class GetStopArgs extends FeedArgs {
+export class GetStopArgs {
+  @Field(() => Int, { nullable: true })
+  @Min(1)
+  feedIndex: number;
+
   @Field()
   @IsNotEmpty()
   stopId: string;

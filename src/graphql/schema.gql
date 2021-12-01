@@ -307,10 +307,10 @@ type FeedInfo {
 type Query {
   feeds: [FeedInfo!]!
   routes(feedIndex: Int!): [Route!]!
-  route(feedIndex: Int!, routeId: String!): Route!
+  route(feedIndex: Int, routeId: String!): Route!
   trips(feedIndex: Int!, routeId: String, serviceId: String): [Trip!]!
-  trip(feedIndex: Int!, tripId: String!): Trip!
-  nextTrip(feedIndex: Int!, routeId: String!, directionId: Int = 0): Trip!
+  trip(feedIndex: Int, tripId: String!): Trip!
+  nextTrip(feedIndex: Int, routeId: String!, directionId: Int = 0): Trip!
   stops(feedIndex: Int!, isParent: Boolean, isChild: Boolean, stopIds: [String!]): [Stop!]!
-  stop(feedIndex: Int!, stopId: String!): Stop!
+  stop(feedIndex: Int, stopId: String!): Stop!
 }

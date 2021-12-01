@@ -67,17 +67,20 @@ export class TripsService {
       return tripInCache;
     }
 
-    const trip = await this.tripRepository
+    const qb = this.tripRepository
       .createQueryBuilder('t')
-      .where('t.feedIndex = :feedIndex', { feedIndex })
-      .andWhere('t.tripId = :tripId', { tripId })
+      .where('t.tripId = :tripId', { tripId })
       .leftJoinAndSelect('t.route', 'route')
       .leftJoinAndSelect('t.stopTimes', 'stopTimes')
       .leftJoinAndSelect('stopTimes.stop', 'stop')
       .leftJoinAndSelect('stop.locationType', 'locationType')
-      .orderBy('stopTimes.stopSequence', 'ASC')
-      .getOne();
+      .orderBy('stopTimes.stopSequence', 'ASC');
 
+    if (feedIndex) {
+      qb.andWhere('t.feedIndex = :feedIndex', { feedIndex });
+    }
+
+    const trip = await qb.getOne();
     if (!trip) {
       throw new NotFoundException(
         `Could not find trip with feedIndex=${feedIndex} and tripId=${tripId}!`,
@@ -114,11 +117,14 @@ export class TripsService {
     const qb = this.stopTimeRepository
       .createQueryBuilder('st')
       .innerJoin('st.trip', 't')
-      .where('st.feedIndex = :feedIndex', { feedIndex })
-      .andWhere('st.stopSequence = 1')
+      .where('st.stopSequence = 1')
       .andWhere(`st.departure_time > interval '${interval}'`)
       .andWhere('t.routeId = :routeId', { routeId })
       .andWhere('t.directionId = :directionId', { directionId });
+
+    if (feedIndex) {
+      qb.andWhere('st.feedIndex = :feedIndex', { feedIndex });
+    }
 
     if (serviceIds.length > 0) {
       // Query only within valid serviceIds
