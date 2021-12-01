@@ -13,6 +13,7 @@ import { getConnectionOptions } from 'typeorm';
 import { RoutesModule } from './routes/routes.module';
 import { TripsModule } from './trips/trips.module';
 import { StopsModule } from './stops/stops.module';
+import { ShapesModule } from './shapes/shapes.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { StopsModule } from './stops/stops.module';
     TripsModule,
     StopsModule,
     AuthModule,
+    ShapesModule,
   ],
 })
 export class AppModule {
