@@ -42,19 +42,19 @@ export class TripsService {
       return tripsInCache;
     }
 
-    const tripsQB = this.tripRepository
+    const qb = this.tripRepository
       .createQueryBuilder('t')
       .where('t.feedIndex = :feedIndex', { feedIndex });
 
     if (routeId) {
-      tripsQB.andWhere('t.routeId = :routeId', { routeId });
+      qb.andWhere('t.routeId = :routeId', { routeId });
     }
 
     if (serviceId) {
-      tripsQB.andWhere('t.serviceId = :serviceId', { serviceId });
+      qb.andWhere('t.serviceId = :serviceId', { serviceId });
     }
 
-    const trips: Trip[] = await tripsQB.getMany();
+    const trips: Trip[] = await qb.getMany();
     this.cacheManager.set(key, trips);
     return trips;
   }
@@ -90,6 +90,8 @@ export class TripsService {
 
   async getNextTrip(args: GetNextTripArgs): Promise<Trip> {
     const { feedIndex, routeId, directionId } = args;
+
+    // Get current time as PostgreSQL Interval
     const zone = 'America/New_York';
     const isoTime = DateTime.now()
       .setZone(zone)
@@ -108,6 +110,7 @@ export class TripsService {
       await calendarQB.getMany()
     ).map((calendar: Calendar) => calendar.serviceId);
 
+    // Get the tripId for the next available trip:
     const qb = this.stopTimeRepository
       .createQueryBuilder('st')
       .innerJoin('st.trip', 't')
@@ -129,6 +132,7 @@ export class TripsService {
         `Could not find stop times for route = ${routeId} and feedIndex = ${feedIndex}`,
       );
     }
+
     const { tripId } = stopTime;
 
     return this.getTrip({ tripId, feedIndex });

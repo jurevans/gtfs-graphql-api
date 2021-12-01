@@ -195,7 +195,7 @@ Get a specific Route:
 
 ### Querying Trips
 
-Get all Trips:
+Get all Trips (you can also specify `serviceId`):
 
 ```graphql
 {
@@ -205,6 +205,40 @@ Get all Trips:
     routeId
     tripType
     directionId
+  }
+}
+```
+
+Get the next available trip by `routeId` and `directionId` (`directionId` can be `0` or `1`, and defaults to `0` if unspecified), this returns useful information that can be used by the client to render a valid route, it's stops, and `shapeId` (shapes will need to be requested separately for performance reasons - this will be implemented in the future):
+
+```graphql
+{
+  nextTrip(feedIndex: 1, routeId: "7", directionId: 1) {
+    tripId
+    tripHeadsign
+    directionId
+    shapeId
+    route {
+      routeId
+      routeShortName
+      routeLongName
+      routeDesc
+      routeColor
+    }
+    stopTimes {
+      stopSequence
+      departureTime {
+        hours
+        minutes
+        seconds
+      }
+      stop {
+        stopName
+        geom {
+          coordinates
+        }
+      }
+    }
   }
 }
 ```
