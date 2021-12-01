@@ -1,6 +1,6 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Trip } from 'entities/trip.entity';
-import { GetTripArgs, GetTripsArgs } from './trips.args';
+import { GetNextTripArgs, GetTripArgs, GetTripsArgs } from './trips.args';
 import { TripsService } from './trips.service';
 
 @Resolver()
@@ -15,5 +15,10 @@ export class TripsResolver {
   @Query(() => Trip, { name: 'trip' })
   getTrip(@Args() getTripArgs: GetTripArgs): Promise<Trip> {
     return this.tripsService.getTrip(getTripArgs);
+  }
+
+  @Query(() => Trip, { name: 'nextTrip' })
+  getNextTrip(@Args() getNextTripsArgs: GetNextTripArgs): Promise<Trip> {
+    return this.tripsService.getNextTrip(getNextTripsArgs);
   }
 }
