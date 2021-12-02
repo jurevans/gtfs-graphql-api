@@ -8,8 +8,14 @@ describe('RoutesService', () => {
   let service: RoutesService;
 
   const mockRoute = {
-    routeId: 'A',
+    routeId: '1',
+    routeDesc: 'Trains operate between 242 St and South Ferry at all times',
+    routeColor: 'EE352E',
+    routeShortName: '1',
+    routeLongName: 'Broadway - 7 Avenue Local',
+    routeUrl: 'http://web.mta.info/nyct/service/pdf/t1cur.pdf',
   };
+
   const mockRoutesRepository = {
     find: jest.fn().mockImplementation((): Promise<Route[]> => {
       return Promise.resolve([mockRoute as Route]);

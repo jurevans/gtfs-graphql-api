@@ -147,7 +147,7 @@ type LineString {
 type ShapeGeom {
   feedIndex: Int
   shapeId: String
-  length: String
+  length: Float
   geom: LineString!
   shape: Shape!
 }
@@ -313,4 +313,6 @@ type Query {
   nextTrip(feedIndex: Int, routeId: String!, directionId: Int = 0): Trip!
   stops(feedIndex: Int!, isParent: Boolean, isChild: Boolean, stopIds: [String!]): [Stop!]!
   stop(feedIndex: Int, stopId: String!): Stop!
+  shapes(shapeIds: [String!]!): [ShapeGeom!]!
+  shape(shapeId: String!): ShapeGeom!
 }

@@ -109,16 +109,16 @@ export class TripsService {
       .where(`c.${today}=1`)
       .andWhere('c.feedIndex=:feedIndex', { feedIndex });
 
-    const serviceIds: string[] = await (
-      await calendarQB.getMany()
-    ).map((calendar: Calendar) => calendar.serviceId);
+    const serviceIds: string[] = (await calendarQB.getMany()).map(
+      (calendar: Calendar) => calendar.serviceId,
+    );
 
     // Get the tripId for the next available trip:
     const qb = this.stopTimeRepository
       .createQueryBuilder('st')
       .innerJoin('st.trip', 't')
       .where('st.stopSequence = 1')
-      .andWhere(`st.departure_time > interval '${interval}'`)
+      .andWhere(`st.departure_time >= interval '${interval}'`)
       .andWhere('t.routeId = :routeId', { routeId })
       .andWhere('t.directionId = :directionId', { directionId });
 
