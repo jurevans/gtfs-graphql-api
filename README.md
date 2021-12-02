@@ -280,6 +280,8 @@ Get a Trip, along with Route info, StopTimes with their associated stop and `Poi
 
 [ [Table of Contents](#table-of-contents) ]
 
+### Querying Shapes
+
 Once we have trips, with their respective `shapeId`s, we can query for the actual shape geometry:
 
 Multiple shapes:
@@ -312,8 +314,6 @@ A single shape:
   }
 }
 ```
-
-### Querying Shapes
 
 [ [Table of Contents](#table-of-contents) ]
 
