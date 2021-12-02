@@ -13,6 +13,7 @@ This is a GraphQL API that serves multiple [GTFS static feeds](https://gtfs.org/
   - [Querying Feeds](#querying-feeds)
   - [Querying Routes](#querying-routes)
   - [Querying Trips](#querying-trips)
+  - [Querying Shapes](#querying-shapes)
   - [Querying Stops](#querying-stops)
     - [Stops with Transfers](#stops-with-transfers)
     - [Querying multiple Stops](#querying-multiple-stops)
@@ -209,7 +210,7 @@ Get all Trips (you can also specify `serviceId`):
 }
 ```
 
-Get the next available trip by `routeId` and `directionId` (`directionId` can be `0` or `1`, and defaults to `0` if unspecified), this returns useful information that can be used by the client to render a valid route, it's stops, and `shapeId` (shapes will need to be requested separately for performance reasons - this will be implemented in the future):
+Get the next available trip by `routeId` and `directionId` (`directionId` can be `0` or `1`, and defaults to `0` if unspecified), this returns useful information that can be used by the client to render a valid route, it's stops, and `shapeId` (see [shape queries](#querying-shapes) below):
 
 ```graphql
 {
@@ -276,6 +277,43 @@ Get a Trip, along with Route info, StopTimes with their associated stop and `Poi
   }
 }
 ```
+
+[ [Table of Contents](#table-of-contents) ]
+
+Once we have trips, with their respective `shapeId`s, we can query for the actual shape geometry:
+
+Multiple shapes:
+
+(**NOTE**: You can also specify `shapeIds: "7..N97R"` to return a single shape, just know that it will still be returned in an array.)
+
+```graphql
+{
+  shapes(shapeIds: ["7..N97R", "7..S97R"]) {
+    shapeId
+    geom {
+      type
+      coordinates
+    }
+  }
+}
+```
+
+A single shape:
+
+```graphql
+{
+  shape(shapeId: "7..N97R") {
+    shapeId
+    length
+    geom {
+      type
+      coordinates
+    }
+  }
+}
+```
+
+### Querying Shapes
 
 [ [Table of Contents](#table-of-contents) ]
 
