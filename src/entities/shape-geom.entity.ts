@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, OneToOne } from 'typeorm';
 import { LineString } from 'entities/linestring.entity';
 import { Shape } from 'entities/shape.entity';
@@ -16,12 +16,12 @@ export class ShapeGeom {
   shapeId: string;
 
   @Column('numeric', { name: 'length', precision: 12, scale: 2 })
-  @Field({ nullable: true })
-  length: string;
+  @Field(() => Float, { nullable: true })
+  length: number;
 
   @Column('geometry', { name: 'the_geom', nullable: true })
   @Field(() => LineString)
-  geom: string | null;
+  geom: LineString;
 
   @OneToOne(() => Shape, (shape) => shape.shapeGeom)
   @Field(() => Shape)

@@ -1,7 +1,6 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { IPostgresInterval } from 'postgres-interval';
-import { intervalTransformer } from 'transformers/';
 import { ContinuousPickup } from 'entities/continuous-pickup.entity';
 import { PickupDropoffTypes } from 'entities/pickup-dropoff-types.entity';
 import { FeedInfo } from 'entities/feed-info.entity';
@@ -27,11 +26,7 @@ export class StopTime {
   @Field({ nullable: true })
   tripId: string;
 
-  @Column('interval', {
-    name: 'arrival_time',
-    nullable: true,
-    transformer: intervalTransformer,
-  })
+  @Column('interval', { name: 'arrival_time', nullable: true })
   @Field(() => Interval, { nullable: true })
   arrivalTime: IPostgresInterval | null;
 

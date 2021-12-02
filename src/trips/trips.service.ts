@@ -7,12 +7,14 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cache } from 'cache-manager';
+import { DateTime } from 'luxon';
 import { Trip } from 'entities/trip.entity';
-import { GetTripArgs, GetTripsArgs } from 'trips/trips.args';
-import { CacheKeyPrefix } from 'constants/';
+import { GetNextTripArgs, GetTripArgs, GetTripsArgs } from 'trips/trips.args';
+import { CacheKeyPrefix, CacheTtlSeconds } from 'constants/';
 import { formatCacheKey, getDayOfWeekForTimezone } from 'util/';
 import { StopTime } from 'entities/stop-time.entity';
 import { Calendar } from 'entities/calendar.entity';
+import * as PostgresInterval from 'postgres-interval';
 
 @Injectable()
 export class TripsService {
@@ -40,35 +42,19 @@ export class TripsService {
       return tripsInCache;
     }
 
-    const tripsQB = this.tripRepository
+    const qb = this.tripRepository
       .createQueryBuilder('t')
-      .where('t.feedIndex=:feedIndex', { feedIndex });
+      .where('t.feedIndex = :feedIndex', { feedIndex });
 
     if (routeId) {
-      tripsQB.andWhere('t.routeId = :routeId', { routeId });
+      qb.andWhere('t.routeId = :routeId', { routeId });
     }
 
     if (serviceId) {
-      tripsQB.andWhere('t.serviceId = :serviceId', { serviceId });
-    } else {
-      // Collect serviceIds for current date in calendar
-      const today = getDayOfWeekForTimezone('America/New_York');
-      const calendarQB = this.calendarRepository
-        .createQueryBuilder('c')
-        .select(['c.serviceId'])
-        .where(`c.${today}=1`)
-        .andWhere('c.feedIndex=:feedIndex', { feedIndex });
-
-      const serviceIds: string[] = await (
-        await calendarQB.getMany()
-      ).map((calendar: Calendar) => calendar.serviceId);
-
-      if (serviceIds.length > 0) {
-        tripsQB.andWhere('t.serviceId IN (:...serviceIds)', { serviceIds });
-      }
+      qb.andWhere('t.serviceId = :serviceId', { serviceId });
     }
 
-    const trips: Trip[] = await tripsQB.getMany();
+    const trips: Trip[] = await qb.getMany();
     this.cacheManager.set(key, trips);
     return trips;
   }
@@ -81,26 +67,80 @@ export class TripsService {
       return tripInCache;
     }
 
-    const trip = await this.tripRepository.findOne({
-      where: { feedIndex, tripId },
-      join: {
-        alias: 'trip',
-        leftJoinAndSelect: {
-          route: 'trip.route',
-          stopTimes: 'trip.stopTimes',
-          stop: 'stopTimes.stop',
-          locationType: 'stop.locationType',
-        },
-      },
-    });
+    const qb = this.tripRepository
+      .createQueryBuilder('t')
+      .where('t.tripId = :tripId', { tripId })
+      .leftJoinAndSelect('t.route', 'route')
+      .leftJoinAndSelect('t.stopTimes', 'stopTimes')
+      .leftJoinAndSelect('stopTimes.stop', 'stop')
+      .leftJoinAndSelect('stop.locationType', 'locationType')
+      .orderBy('stopTimes.stopSequence', 'ASC');
 
+    if (feedIndex) {
+      qb.andWhere('t.feedIndex = :feedIndex', { feedIndex });
+    }
+
+    const trip = await qb.getOne();
     if (!trip) {
       throw new NotFoundException(
         `Could not find trip with feedIndex=${feedIndex} and tripId=${tripId}!`,
       );
     }
 
-    this.cacheManager.set(key, trip);
+    this.cacheManager.set(key, trip, { ttl: CacheTtlSeconds.THIRTY_SECONDS });
     return trip;
+  }
+
+  async getNextTrip(args: GetNextTripArgs): Promise<Trip> {
+    const { feedIndex, routeId, directionId } = args;
+
+    // Get current time as PostgreSQL Interval
+    const zone = 'America/New_York';
+    const isoTime = DateTime.now()
+      .setZone(zone)
+      .toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+    const interval = PostgresInterval(isoTime).toPostgres();
+
+    // Collect serviceIds for current date in calendar
+    const today = getDayOfWeekForTimezone(zone);
+    const calendarQB = this.calendarRepository
+      .createQueryBuilder('c')
+      .select(['c.serviceId'])
+      .where(`c.${today}=1`)
+      .andWhere('c.feedIndex=:feedIndex', { feedIndex });
+
+    const serviceIds: string[] = (await calendarQB.getMany()).map(
+      (calendar: Calendar) => calendar.serviceId,
+    );
+
+    // Get the tripId for the next available trip:
+    const qb = this.stopTimeRepository
+      .createQueryBuilder('st')
+      .innerJoin('st.trip', 't')
+      .where('st.stopSequence = 1')
+      .andWhere(`st.departure_time >= interval '${interval}'`)
+      .andWhere('t.routeId = :routeId', { routeId })
+      .andWhere('t.directionId = :directionId', { directionId });
+
+    if (feedIndex) {
+      qb.andWhere('st.feedIndex = :feedIndex', { feedIndex });
+    }
+
+    if (serviceIds.length > 0) {
+      // Query only within valid serviceIds
+      qb.andWhere('t.serviceId  IN (:...serviceIds)', { serviceIds });
+    }
+
+    const stopTime = await qb.getOne();
+
+    if (!stopTime) {
+      throw new NotFoundException(
+        `Could not find stop times for route = ${routeId} and feedIndex = ${feedIndex}`,
+      );
+    }
+
+    const { tripId } = stopTime;
+
+    return this.getTrip({ tripId, feedIndex });
   }
 }
