@@ -65,8 +65,9 @@ export class TripsService {
 
   async getTrip(args: GetTripArgs): Promise<Trip> {
     const { feedIndex, tripId } = args;
-    const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex, tripId });
+    const key = formatCacheKey(CacheKeyPrefix.TRIPS, { feedIndex, tripId });
     const tripInCache: Trip = await this.cacheManager.get(key);
+
     if (tripInCache) {
       return tripInCache;
     }
@@ -97,6 +98,19 @@ export class TripsService {
 
   async getNextTrips(args: GetNextTripsArgs): Promise<Trip[]> {
     const { feedIndex, routeId } = args;
+
+    const key = formatCacheKey(CacheKeyPrefix.NEXT_TRIPS, {
+      feedIndex,
+      routeId,
+    });
+    const tripIdsInCache: string[] = await this.cacheManager.get(key);
+
+    if (tripIdsInCache) {
+      return this.getTrips({
+        feedIndex,
+        tripIds: tripIdsInCache,
+      });
+    }
 
     // Get current time as PostgreSQL Interval
     const zone = 'America/New_York';
@@ -144,9 +158,12 @@ export class TripsService {
       );
     }
 
+    const tripIds = nextTrips.map((stopTime) => stopTime.tripId);
+    this.cacheManager.set(key, tripIds);
+
     return this.getTrips({
       feedIndex,
-      tripIds: nextTrips.map((stopTime) => stopTime.tripId),
+      tripIds,
     });
   }
 }

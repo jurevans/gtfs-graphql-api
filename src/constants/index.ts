@@ -13,5 +13,6 @@ export enum CacheKeyPrefix {
   FEEDS = 'feeds',
   ROUTES = 'routes',
   TRIPS = 'trips',
+  NEXT_TRIPS = 'next-trips',
   SHAPE = 'shape',
 }
