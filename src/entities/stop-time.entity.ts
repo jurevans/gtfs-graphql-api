@@ -8,6 +8,7 @@ import { Stop } from 'entities/stop.entity';
 import { Trip } from 'entities/trip.entity';
 import { Timepoint } from 'entities/timepoint.entity';
 import { Interval } from 'entities/interval.entity';
+import { intervalToTime } from 'transformers';
 
 @Index('arr_time_index', ['arrivalTimeSeconds'], {})
 @Index('dep_time_index', ['departureTimeSeconds'], {})
@@ -30,9 +31,25 @@ export class StopTime {
   @Field(() => Interval, { nullable: true })
   arrivalTime: IPostgresInterval | null;
 
+  @Column('text', {
+    name: 'departure_time',
+    nullable: true,
+    transformer: intervalToTime,
+  })
+  @Field(() => String, { nullable: true })
+  arrival: string | null;
+
   @Column('interval', { name: 'departure_time', nullable: true })
   @Field(() => Interval, { nullable: true })
   departureTime: IPostgresInterval | null;
+
+  @Column('text', {
+    name: 'departure_time',
+    nullable: true,
+    transformer: intervalToTime,
+  })
+  @Field(() => String, { nullable: true })
+  departure: string | null;
 
   @Column('text', { name: 'stop_id', nullable: true })
   @Field({ nullable: true })
