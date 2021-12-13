@@ -46,7 +46,7 @@ export class TripsService {
       .createQueryBuilder('t')
       .innerJoinAndSelect('t.stopTimes', 'stopTimes')
       .innerJoinAndSelect('stopTimes.stop', 'stop')
-      .innerJoinAndSelect('stop.locationType', 'locationType')
+      .leftJoinAndSelect('stop.locationType', 'locationType')
       .where('t.feedIndex = :feedIndex', { feedIndex })
       .orderBy('stopTimes.stopSequence, stopTimes.departureTime', 'ASC');
 
