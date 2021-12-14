@@ -1,5 +1,5 @@
 import { ArgsType, Field, Int } from '@nestjs/graphql';
-import { IsNotEmpty, Max, Min } from 'class-validator';
+import { IsNotEmpty, Min } from 'class-validator';
 
 @ArgsType()
 export class GetTripsArgs {
@@ -8,10 +8,11 @@ export class GetTripsArgs {
   feedIndex: number;
 
   @Field({ nullable: true })
-  routeId: string;
+  routeId?: string;
 
-  @Field({ nullable: true })
-  serviceId: string;
+  @Field(() => [String])
+  @IsNotEmpty()
+  tripIds: string[];
 }
 
 @ArgsType()
@@ -26,7 +27,7 @@ export class GetTripArgs {
 }
 
 @ArgsType()
-export class GetNextTripArgs {
+export class GetNextTripsArgs {
   @Field(() => Int, { nullable: true })
   @Min(1)
   feedIndex: number;
@@ -34,8 +35,4 @@ export class GetNextTripArgs {
   @Field()
   @IsNotEmpty()
   routeId: string;
-
-  @Field(() => Int, { nullable: true, defaultValue: 0 })
-  @Max(1)
-  directionId: number;
 }

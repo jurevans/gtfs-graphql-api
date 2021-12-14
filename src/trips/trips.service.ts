@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { Cache } from 'cache-manager';
 import { DateTime } from 'luxon';
 import { Trip } from 'entities/trip.entity';
-import { GetNextTripArgs, GetTripArgs, GetTripsArgs } from 'trips/trips.args';
+import { GetNextTripsArgs, GetTripArgs, GetTripsArgs } from 'trips/trips.args';
 import { CacheKeyPrefix, CacheTtlSeconds } from 'constants/';
 import { formatCacheKey, getDayOfWeekForTimezone } from 'util/';
 import { StopTime } from 'entities/stop-time.entity';
@@ -30,11 +30,11 @@ export class TripsService {
   ) {}
 
   async getTrips(args: GetTripsArgs): Promise<Trip[]> {
-    const { feedIndex, routeId, serviceId } = args;
+    const { feedIndex, routeId, tripIds = [] } = args;
     const key = formatCacheKey(CacheKeyPrefix.ROUTES, {
       feedIndex,
       routeId,
-      serviceId,
+      tripIds: tripIds.join(','),
     });
     const tripsInCache: Trip[] = await this.cacheManager.get(key);
 
@@ -44,14 +44,18 @@ export class TripsService {
 
     const qb = this.tripRepository
       .createQueryBuilder('t')
-      .where('t.feedIndex = :feedIndex', { feedIndex });
+      .innerJoinAndSelect('t.stopTimes', 'stopTimes')
+      .innerJoinAndSelect('stopTimes.stop', 'stop')
+      .leftJoinAndSelect('stop.locationType', 'locationType')
+      .where('t.feedIndex = :feedIndex', { feedIndex })
+      .orderBy('stopTimes.stopSequence, stopTimes.departureTime', 'ASC');
 
     if (routeId) {
       qb.andWhere('t.routeId = :routeId', { routeId });
     }
 
-    if (serviceId) {
-      qb.andWhere('t.serviceId = :serviceId', { serviceId });
+    if (tripIds.length > 0) {
+      qb.andWhere('t.tripId IN(:...tripIds)', { tripIds });
     }
 
     const trips: Trip[] = await qb.getMany();
@@ -61,8 +65,9 @@ export class TripsService {
 
   async getTrip(args: GetTripArgs): Promise<Trip> {
     const { feedIndex, tripId } = args;
-    const key = formatCacheKey(CacheKeyPrefix.ROUTES, { feedIndex, tripId });
+    const key = formatCacheKey(CacheKeyPrefix.TRIPS, { feedIndex, tripId });
     const tripInCache: Trip = await this.cacheManager.get(key);
+
     if (tripInCache) {
       return tripInCache;
     }
@@ -91,8 +96,21 @@ export class TripsService {
     return trip;
   }
 
-  async getNextTrip(args: GetNextTripArgs): Promise<Trip> {
-    const { feedIndex, routeId, directionId } = args;
+  async getNextTrips(args: GetNextTripsArgs): Promise<Trip[]> {
+    const { feedIndex, routeId } = args;
+
+    const key = formatCacheKey(CacheKeyPrefix.NEXT_TRIPS, {
+      feedIndex,
+      routeId,
+    });
+    const tripIdsInCache: string[] = await this.cacheManager.get(key);
+
+    if (tripIdsInCache) {
+      return this.getTrips({
+        feedIndex,
+        tripIds: tripIdsInCache,
+      });
+    }
 
     // Get current time as PostgreSQL Interval
     const zone = 'America/New_York';
@@ -119,8 +137,7 @@ export class TripsService {
       .innerJoin('st.trip', 't')
       .where('st.stopSequence = 1')
       .andWhere(`st.departure_time >= interval '${interval}'`)
-      .andWhere('t.routeId = :routeId', { routeId })
-      .andWhere('t.directionId = :directionId', { directionId });
+      .andWhere('t.routeId = :routeId', { routeId });
 
     if (feedIndex) {
       qb.andWhere('st.feedIndex = :feedIndex', { feedIndex });
@@ -131,16 +148,22 @@ export class TripsService {
       qb.andWhere('t.serviceId  IN (:...serviceIds)', { serviceIds });
     }
 
-    const stopTime = await qb.getOne();
+    qb.limit(10);
 
-    if (!stopTime) {
+    const nextTrips = await qb.getMany();
+
+    if (!nextTrips) {
       throw new NotFoundException(
         `Could not find stop times for route = ${routeId} and feedIndex = ${feedIndex}`,
       );
     }
 
-    const { tripId } = stopTime;
+    const tripIds = nextTrips.map((stopTime) => stopTime.tripId);
+    this.cacheManager.set(key, tripIds);
 
-    return this.getTrip({ tripId, feedIndex });
+    return this.getTrips({
+      feedIndex,
+      tripIds,
+    });
   }
 }

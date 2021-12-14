@@ -1,12 +1,12 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
 import { getConnectionOptions } from 'typeorm';
 import { join } from 'path';
 import authConfig from 'config/auth.config';
 import redisConfig from 'config/redis.config';
 import databaseConfig from 'config/database.config';
-import { GraphQLModule } from '@nestjs/graphql';
 import { AuthModule } from 'auth/auth.module';
 import { AuthMiddleware } from 'middleware/auth.middleware';
 import { FeedModule } from 'feeds/feed.module';

@@ -122,7 +122,9 @@ type StopTime {
   feedIndex: Int!
   tripId: String
   arrivalTime: Interval
+  arrival: String
   departureTime: Interval
+  departure: String
   stopId: String
   stopSequence: Int
   stopHeadsign: String
@@ -308,9 +310,9 @@ type Query {
   feeds: [FeedInfo!]!
   routes(feedIndex: Int!): [Route!]!
   route(feedIndex: Int, routeId: String!): Route!
-  trips(feedIndex: Int!, routeId: String, serviceId: String): [Trip!]!
+  trips(feedIndex: Int!, routeId: String, tripIds: [String!]!): [Trip!]!
   trip(feedIndex: Int, tripId: String!): Trip!
-  nextTrip(feedIndex: Int, routeId: String!, directionId: Int = 0): Trip!
+  nextTrips(feedIndex: Int, routeId: String!): [Trip!]!
   stops(feedIndex: Int!, isParent: Boolean, isChild: Boolean, stopIds: [String!]): [Stop!]!
   stop(feedIndex: Int, stopId: String!): Stop!
   shapes(shapeIds: [String!]!): [ShapeGeom!]!
