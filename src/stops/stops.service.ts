@@ -120,6 +120,12 @@ export class StopsService {
       where: { feedIndex, stopId: parentStation },
     });
 
+    if (!station) {
+      throw new NotFoundException(
+        `Could not find station with feedIndex=${feedIndex} and stopId=${parentStation}!`,
+      );
+    }
+
     const { transfers } = station;
     const toStopIds = transfers.map((transfer: Transfer) => transfer.toStopId);
 
