@@ -20,11 +20,21 @@ export class GetStopsArgs {
 
 @ArgsType()
 export class GetStopArgs {
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int)
   @Min(1)
   feedIndex: number;
 
   @Field()
   @IsNotEmpty()
   stopId: string;
+}
+
+@ArgsType()
+export class GetTransfersArgs {
+  @Field(() => Int)
+  @Min(1)
+  feedIndex: number;
+
+  @Field(() => String)
+  parentStation: string;
 }
