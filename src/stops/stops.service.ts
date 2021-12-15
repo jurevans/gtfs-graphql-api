@@ -8,8 +8,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOperator, In, IsNull, Not, Repository } from 'typeorm';
 import { Cache } from 'cache-manager';
 import { Stop } from 'entities/stop.entity';
-import { GetStopArgs, GetStopsArgs } from 'stops/stops.args';
-import { CacheKeyPrefix } from 'constants/';
+import { Transfer } from 'entities/transfer.entity';
+import { GetStopArgs, GetStopsArgs, GetTransfersArgs } from 'stops/stops.args';
+import { CacheKeyPrefix, CacheTtlSeconds } from 'constants/';
 import { formatCacheKey } from 'util/';
 
 @Injectable()
@@ -95,5 +96,39 @@ export class StopsService {
 
     this.cacheManager.set(key, stop);
     return stop;
+  }
+
+  async getTransfers(args: GetTransfersArgs) {
+    const { feedIndex, parentStation } = args;
+    const key = formatCacheKey(CacheKeyPrefix.TRANSFERS, {
+      feedIndex,
+      parentStation,
+    });
+
+    const transfersInCache: Stop[] = await this.cacheManager.get(key);
+    if (transfersInCache) {
+      return transfersInCache;
+    }
+
+    const station = await this.stopRepository.findOne({
+      join: {
+        alias: 'stop',
+        leftJoinAndSelect: {
+          transfers: 'stop.transfers',
+        },
+      },
+      where: { feedIndex, stopId: parentStation },
+    });
+
+    const { transfers } = station;
+    const toStopIds = transfers.map((transfer: Transfer) => transfer.toStopId);
+
+    const stops = await this.stopRepository.find({
+      where: {
+        parentStation: In(toStopIds),
+      },
+    });
+    this.cacheManager.set(key, stops, CacheTtlSeconds.ONE_WEEK);
+    return stops;
   }
 }

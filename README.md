@@ -542,6 +542,61 @@ Which yields the following:
 
 [ [Table of Contents](#table-of-contents) ]
 
+#### Querying Transfers
+
+If you have a station ID (e.g., `127`, the `parentStation` of stop `127N` and `127S`), you can query for the stops associated with the `transfers` stations, for instance, if you are wanting to match a station with real-time `tripUpdate` and `vehicle` data, which is keyed by `stopId`:
+
+```graphql
+{
+  transfers(feedIndex: 1, parentStation: "127") {
+    stopId
+  }
+}
+```
+
+Which yields:
+
+```json
+{
+  "data": {
+    "transfers": [
+      {
+        "stopId": "127N"
+      },
+      {
+        "stopId": "127S"
+      },
+      {
+        "stopId": "725N"
+      },
+      {
+        "stopId": "725S"
+      },
+      {
+        "stopId": "902N"
+      },
+      {
+        "stopId": "902S"
+      },
+      {
+        "stopId": "A27N"
+      },
+      {
+        "stopId": "A27S"
+      },
+      {
+        "stopId": "R16N"
+      },
+      {
+        "stopId": "R16S"
+      }
+    ]
+  }
+}
+```
+
+From this, you can easily filter the results from the real-time feed to get updates relevant to that particular station. **NOTE** that this query returns full stop entities, so you can also query for name and geometry.
+
 ## Generated ERD
 
 The generated ERD of the PostgreSQL/PostGIS database:
