@@ -9,7 +9,12 @@ import { FindOperator, In, IsNull, Not, Repository } from 'typeorm';
 import { Cache } from 'cache-manager';
 import { Stop } from 'entities/stop.entity';
 import { Transfer } from 'entities/transfer.entity';
-import { GetStopArgs, GetStopsArgs, GetTransfersArgs } from 'stops/stops.args';
+import {
+  GetStopArgs,
+  GetStopsArgs,
+  GetStopsByLocationArgs,
+  GetTransfersArgs,
+} from 'stops/stops.args';
 import { CacheKeyPrefix, CacheTtlSeconds } from 'constants/';
 import { formatCacheKey } from 'util/';
 
@@ -96,6 +101,30 @@ export class StopsService {
 
     this.cacheManager.set(key, stop);
     return stop;
+  }
+
+  async getStopsByLocation(args: GetStopsByLocationArgs): Promise<Stop[]> {
+    const { location, radius } = args;
+
+    const qb = this.stopRepository
+      .createQueryBuilder('stops')
+      .select([
+        'stops.feedIndex',
+        'stops.stopId',
+        'stops.stopName',
+        'stops.geom',
+      ])
+      .where(
+        `ST_DWithin (stops.geom,
+          ST_SetSRID(
+            ST_MakePoint(${location[0]}, ${location[1]}),
+            4326
+          ),
+          ${radius}
+        )`,
+      )
+      .andWhere('stops.parentStation IS NULL');
+    return qb.getMany();
   }
 
   async getTransfers(args: GetTransfersArgs) {

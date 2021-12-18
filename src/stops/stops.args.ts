@@ -1,4 +1,4 @@
-import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { ArgsType, Field, Float, Int } from '@nestjs/graphql';
 import { IsArray, IsNotEmpty, Min } from 'class-validator';
 
 @ArgsType()
@@ -27,6 +27,15 @@ export class GetStopArgs {
   @Field()
   @IsNotEmpty()
   stopId: string;
+}
+
+@ArgsType()
+export class GetStopsByLocationArgs {
+  @Field(() => [Float])
+  location: [number, number];
+
+  @Field(() => Float)
+  radius: number;
 }
 
 @ArgsType()
