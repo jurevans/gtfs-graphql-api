@@ -191,7 +191,7 @@ export class StopsService {
     }
 
     const stops = await this.stopRepository.find(options);
-    this.cacheManager.set(key, stops, CacheTtlSeconds.FOREVER);
+    this.cacheManager.set(key, stops, CacheTtlSeconds.ONE_DAY);
     return stops;
   }
 }
