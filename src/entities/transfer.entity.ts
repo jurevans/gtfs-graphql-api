@@ -65,6 +65,7 @@ export class Transfer {
 
   @ManyToOne(() => Stop, (stop) => stop.transfers)
   @JoinColumn([{ name: 'from_stop_id', referencedColumnName: 'stopId' }])
+  @JoinColumn([{ name: 'feed_index', referencedColumnName: 'feedIndex' }])
   @Field(() => Stop)
   transfersFrom: Stop;
 }

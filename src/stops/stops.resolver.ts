@@ -2,6 +2,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Stop } from 'entities/stop.entity';
 import { StopsService } from 'stops/stops.service';
 import {
+  GetStationsArgs,
   GetStopArgs,
   GetStopsArgs,
   GetStopsByLocationArgs,
@@ -32,5 +33,10 @@ export class StopsResolver {
   @Query(() => [Stop], { name: 'transfers' })
   getTransfers(@Args() getStopArgs: GetTransfersArgs): Promise<Stop[]> {
     return this.stopsService.getTransfers(getStopArgs);
+  }
+
+  @Query(() => [Stop], { name: 'stations' })
+  getStations(@Args() getStationsArgs: GetStationsArgs): Promise<Stop[]> {
+    return this.stopsService.getStations(getStationsArgs);
   }
 }

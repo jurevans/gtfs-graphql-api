@@ -3,15 +3,8 @@ import { IsArray, IsNotEmpty, Min } from 'class-validator';
 
 @ArgsType()
 export class GetStopsArgs {
-  @Field(() => Int)
-  @Min(1)
-  feedIndex: number;
-
-  @Field({ nullable: true })
-  isParent: boolean;
-
-  @Field({ nullable: true })
-  isChild: boolean;
+  @Field(() => Int, { nullable: true })
+  feedIndex?: number;
 
   @Field(() => [String], { nullable: true })
   @IsArray()
@@ -44,6 +37,16 @@ export class GetTransfersArgs {
   @Min(1)
   feedIndex: number;
 
-  @Field(() => String)
-  parentStation: string;
+  @Field(() => [String], { nullable: true })
+  stopIds: string[];
+}
+
+@ArgsType()
+export class GetStationsArgs {
+  @Field(() => Int, { nullable: true })
+  @Min(1)
+  feedIndex?: number;
+
+  @Field(() => [String], { nullable: true })
+  stationIds?: string[];
 }
