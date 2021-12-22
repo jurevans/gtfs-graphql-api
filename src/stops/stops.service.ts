@@ -5,11 +5,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOperator, In, IsNull, Not, Repository } from 'typeorm';
+import { FindOperator, In, IsNull, Repository } from 'typeorm';
 import { Cache } from 'cache-manager';
 import { Stop } from 'entities/stop.entity';
 import { Transfer } from 'entities/transfer.entity';
-import { GetStopArgs, GetStopsArgs, GetTransfersArgs } from 'stops/stops.args';
+import {
+  GetStationsArgs,
+  GetStopArgs,
+  GetStopsArgs,
+  GetStopsByLocationArgs,
+  GetTransfersArgs,
+} from 'stops/stops.args';
 import { CacheKeyPrefix, CacheTtlSeconds } from 'constants/';
 import { formatCacheKey } from 'util/';
 
@@ -22,12 +28,10 @@ export class StopsService {
     private readonly stopRepository: Repository<Stop>,
   ) {}
 
-  async getStops(args: GetStopsArgs): Promise<Stop[]> {
-    const { feedIndex, isParent, isChild, stopIds = [] } = args;
+  public async getStops(args: GetStopsArgs): Promise<Stop[]> {
+    const { feedIndex, stopIds = [] } = args;
     const key = formatCacheKey(CacheKeyPrefix.STOPS, {
       feedIndex,
-      isParent,
-      isChild,
       stopIds: stopIds.join(','),
     });
     const stopsInCache: Stop[] = await this.cacheManager.get(key);
@@ -38,24 +42,18 @@ export class StopsService {
 
     type Options = {
       where: {
-        feedIndex: number;
-        parentStation?: FindOperator<string>;
+        feedIndex?: number;
         stopId?: FindOperator<string>;
+        parentStation?: FindOperator<string>;
       };
     };
 
     const options: Options = {
-      where: {
-        feedIndex,
-      },
+      where: {},
     };
 
-    if (isParent) {
-      options.where.parentStation = IsNull();
-    }
-
-    if (isChild) {
-      options.where.parentStation = Not(IsNull());
+    if (feedIndex) {
+      options.where.feedIndex = feedIndex;
     }
 
     if (stopIds.length > 0) {
@@ -68,7 +66,7 @@ export class StopsService {
     return stops;
   }
 
-  async getStop(args: GetStopArgs): Promise<Stop> {
+  public async getStop(args: GetStopArgs): Promise<Stop> {
     const { feedIndex, stopId } = args;
     const key = formatCacheKey(CacheKeyPrefix.STOPS, { feedIndex, stopId });
     const stopInCache: Stop = await this.cacheManager.get(key);
@@ -98,11 +96,37 @@ export class StopsService {
     return stop;
   }
 
-  async getTransfers(args: GetTransfersArgs) {
-    const { feedIndex, parentStation } = args;
+  public async getStopsByLocation(
+    args: GetStopsByLocationArgs,
+  ): Promise<Stop[]> {
+    const { location, radius } = args;
+
+    const qb = this.stopRepository
+      .createQueryBuilder('stops')
+      .select([
+        'stops.feedIndex',
+        'stops.stopId',
+        'stops.stopName',
+        'stops.geom',
+      ])
+      .where(
+        `ST_DWithin (stops.geom,
+          ST_SetSRID(
+            ST_MakePoint(${location[0]}, ${location[1]}),
+            4326
+          ),
+          ${radius}
+        )`,
+      )
+      .andWhere('stops.parentStation IS NULL');
+    return qb.getMany();
+  }
+
+  public async getTransfers(args: GetTransfersArgs) {
+    const { feedIndex, stopIds } = args;
     const key = formatCacheKey(CacheKeyPrefix.TRANSFERS, {
       feedIndex,
-      parentStation,
+      stopIds: stopIds.join(','),
     });
 
     const transfersInCache: Stop[] = await this.cacheManager.get(key);
@@ -110,23 +134,17 @@ export class StopsService {
       return transfersInCache;
     }
 
-    const station = await this.stopRepository.findOne({
+    const stations = await this.stopRepository.find({
       join: {
         alias: 'stop',
         leftJoinAndSelect: {
           transfers: 'stop.transfers',
         },
       },
-      where: { feedIndex, stopId: parentStation },
+      where: { feedIndex, stopId: In(stopIds) },
     });
 
-    if (!station) {
-      throw new NotFoundException(
-        `Could not find station with feedIndex=${feedIndex} and stopId=${parentStation}!`,
-      );
-    }
-
-    const { transfers } = station;
+    const transfers = stations.map((station: Stop) => station.transfers).flat();
     const toStopIds = transfers.map((transfer: Transfer) => transfer.toStopId);
 
     const stops = await this.stopRepository.find({
@@ -135,6 +153,45 @@ export class StopsService {
       },
     });
     this.cacheManager.set(key, stops, CacheTtlSeconds.ONE_WEEK);
+    return stops;
+  }
+
+  public async getStations(getStationsArgs: GetStationsArgs): Promise<Stop[]> {
+    const { feedIndex, stationIds = [] } = getStationsArgs;
+    const key = formatCacheKey(CacheKeyPrefix.STATIONS, {
+      feedIndex,
+      stationIds: stationIds.join(','),
+    });
+
+    const stationsInCache: Stop[] = await this.cacheManager.get(key);
+    if (stationsInCache) {
+      return stationsInCache;
+    }
+
+    type Options = {
+      where: {
+        parentStation: FindOperator<string>;
+        feedIndex?: number;
+        stopId?: FindOperator<string>;
+      };
+      order: any;
+    };
+
+    const options: Options = {
+      where: { parentStation: IsNull() },
+      order: { feedIndex: 'ASC' },
+    };
+
+    if (feedIndex) {
+      options.where.feedIndex = feedIndex;
+    }
+
+    if (stationIds.length > 0) {
+      options.where.stopId = In(stationIds);
+    }
+
+    const stops = await this.stopRepository.find(options);
+    this.cacheManager.set(key, stops, CacheTtlSeconds.ONE_DAY);
     return stops;
   }
 }

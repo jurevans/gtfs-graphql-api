@@ -313,9 +313,11 @@ type Query {
   trips(feedIndex: Int!, routeId: String, tripIds: [String!]!): [Trip!]!
   trip(feedIndex: Int, tripId: String!): Trip!
   nextTrips(feedIndex: Int, routeId: String!): [Trip!]!
-  stops(feedIndex: Int!, isParent: Boolean, isChild: Boolean, stopIds: [String!]): [Stop!]!
+  stops(feedIndex: Int, stopIds: [String!]): [Stop!]!
   stop(feedIndex: Int!, stopId: String!): Stop!
-  transfers(feedIndex: Int!, parentStation: String!): [Stop!]!
+  stopsByLocation(location: [Float!]!, radius: Float!): [Stop!]!
+  transfers(feedIndex: Int!, stopIds: [String!]): [Stop!]!
+  stations(feedIndex: Int, stationIds: [String!]): [Stop!]!
   shapes(shapeIds: [String!]!): [ShapeGeom!]!
   shape(shapeId: String!): ShapeGeom!
 }

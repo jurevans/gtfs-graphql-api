@@ -10,6 +10,7 @@ export enum CacheTtlSeconds {
 export enum CacheKeyPrefix {
   TRANSFERS = 'transfers',
   STOPS = 'stops',
+  STATIONS = 'stations',
   FEEDS = 'feeds',
   ROUTES = 'routes',
   TRIPS = 'trips',
