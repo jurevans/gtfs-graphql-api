@@ -100,6 +100,14 @@ export class StopsService {
     args: GetStopsByLocationArgs,
   ): Promise<Stop[]> {
     const { location, radius } = args;
+    const key = formatCacheKey(CacheKeyPrefix.STOPS, {
+      location: JSON.stringify(args),
+    });
+    const stopsInCache: Stop[] = await this.cacheManager.get(key);
+
+    if (stopsInCache) {
+      return stopsInCache;
+    }
 
     const qb = this.stopRepository
       .createQueryBuilder('stops')
@@ -119,7 +127,10 @@ export class StopsService {
         )`,
       )
       .andWhere('stops.parentStation IS NULL');
-    return qb.getMany();
+
+    const stopsByLocation = await qb.getMany();
+    this.cacheManager.set(key, stopsByLocation, CacheTtlSeconds.ONE_HOUR);
+    return stopsByLocation;
   }
 
   public async getTransfers(args: GetTransfersArgs) {
